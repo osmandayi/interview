@@ -47,3 +47,34 @@ describe('parseDocument — Frontend', () => {
     }
   });
 });
+
+describe('parseDocument — Backend', () => {
+  it('returns a backend category with 5 subcategories', () => {
+    const result = parseDocument(SOURCE);
+    const backend = result.categories.find((c) => c.id === 'backend');
+    expect(backend).toBeDefined();
+    expect(backend!.title).toBe('Backend');
+    expect(backend!.subcategories.length).toBe(5);
+  });
+
+  it('finds Spring Framework subcategory with @Autowired Q&A', () => {
+    const result = parseDocument(SOURCE);
+    const spring = result.categories
+      .find((c) => c.id === 'backend')!
+      .subcategories.find((s) => s.title.includes('Spring Framework'));
+    expect(spring).toBeDefined();
+    const autowired = spring!.items.find((i) => i.question.includes('@Autowired'));
+    expect(autowired).toBeDefined();
+    expect(autowired!.answer).toMatch(/Dependency Injection/i);
+  });
+
+  it('finds SQL HAVING Q&A in SQL subcategory', () => {
+    const result = parseDocument(SOURCE);
+    const sql = result.categories
+      .find((c) => c.id === 'backend')!
+      .subcategories.find((s) => s.title.includes('SQL'));
+    const having = sql!.items.find((i) => i.question.toLowerCase().includes('having'));
+    expect(having).toBeDefined();
+    expect(having!.answer).toMatch(/GROUP BY/);
+  });
+});

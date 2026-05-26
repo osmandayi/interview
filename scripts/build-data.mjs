@@ -18,6 +18,126 @@ const FRONTEND_SUBCATEGORIES = [
   'En İyi Pratikler ve Proje Mimarisi'
 ];
 
+const BACKEND_SUBCATEGORIES = [
+  '1. Java Core ve Temel Kavramlar',
+  '2. Spring Framework ve Mikroservisler',
+  '3. SQL ve Veritabanı',
+  '4. Veri Yapıları ve Algoritmalar',
+  '5. Yazılım Mühendisliği ve Metodolojiler'
+];
+
+// Known question titles per subcategory.
+// Use the EXACT text from full_stack.txt including trailing colon or question mark.
+const BACKEND_QUESTIONS = {
+  '1. Java Core ve Temel Kavramlar': [
+    'Integer ve int farkı:',
+    'Java HashMap ve List farkı:',
+    'HashMap ve List Eleman Ekleme/Çıkarma Metotları:',
+    'Final ve Finally farkı:',
+    'Metot Overloading (Aşırı Yükleme) nedir?',
+    "Bir class birden fazla class'ı extend edebilir mi?",
+    'Static ve Normal fonksiyon nasıl çağrılır?',
+    'String, StringBuilder, StringBuffer farkları:',
+    '.java ve .class farkı nedir?',
+    '.jar, .war, .ear farkı ve ne oldukları:'
+  ],
+  '2. Spring Framework ve Mikroservisler': [
+    '@Autowired nedir?',
+    'Entity ve Repository nedir?',
+    'Service Registry nedir?',
+    'Merkezi loglama nasıl yapılır? (Interceptor, AOP)',
+    'Aspect Oriented Programming (AOP) nedir?',
+    'Spring Core Genel:',
+    'Transaction nedir? Anotasyon hangi parametreleri alır?',
+    'Resilience4j:',
+    'Zipkin:',
+    'Grafana:',
+    'Mikroservis Design Patternleri Nelerdir?',
+    'Saga Pattern nedir?',
+    'CQRS (Command Query Responsibility Segregation) nedir?'
+  ],
+  '3. SQL ve Veritabanı': [
+    'HAVING nedir?',
+    'JOIN ve UNION nedir?',
+    'SQL Normalizasyon Adımları:'
+  ],
+  '4. Veri Yapıları ve Algoritmalar': [
+    'Queue ve Stack farkı nedir?',
+    '$O(n)$ ve $O(n^2)$ nedir?',
+    'Stream nedir ve metotları nelerdir?',
+    'Algoritma Sorusu: boolean isSortedasc(int[] arr)'
+  ],
+  '5. Yazılım Mühendisliği ve Metodolojiler': [
+    'OOP (Object Oriented Programming - Nesne Yönelimli Programlama):',
+    'SOLID:',
+    'Strategy Pattern nedir?',
+    'UML (Unified Modeling Language) nedir?',
+    'Git kullandın mı? Merge nedir?',
+    'Agile nedir, Scrum nedir, kullandınız mı?'
+  ]
+};
+
+function findOccurrences(haystack, needle) {
+  const positions = [];
+  let idx = 0;
+  while ((idx = haystack.indexOf(needle, idx)) !== -1) {
+    positions.push(idx);
+    idx += needle.length;
+  }
+  return positions;
+}
+
+function parseBackend(text) {
+  const flat = text.replace(/\r/g, '');
+
+  const subSplits = BACKEND_SUBCATEGORIES.map((title) => {
+    const pos = flat.indexOf(title);
+    if (pos === -1) throw new Error(`Backend subcategory bulunamadı: ${title}`);
+    return { title, pos };
+  }).sort((a, b) => a.pos - b.pos);
+
+  const subcategories = [];
+
+  for (let i = 0; i < subSplits.length; i++) {
+    const { title, pos } = subSplits[i];
+    const end = i + 1 < subSplits.length ? subSplits[i + 1].pos : flat.length;
+    const subText = flat.slice(pos + title.length, end);
+
+    const questions = BACKEND_QUESTIONS[title] || [];
+    const qSplits = [];
+    for (const q of questions) {
+      const positions = findOccurrences(subText, q);
+      if (positions.length === 0) {
+        console.warn(`⚠ Soru bulunamadı (${title}): "${q.slice(0, 50)}..."`);
+        continue;
+      }
+      qSplits.push({ question: q, pos: positions[0] });
+    }
+    qSplits.sort((a, b) => a.pos - b.pos);
+
+    const items = [];
+    for (let j = 0; j < qSplits.length; j++) {
+      const { question, pos: qPos } = qSplits[j];
+      const qEnd = j + 1 < qSplits.length ? qSplits[j + 1].pos : subText.length;
+      const answer = subText.slice(qPos + question.length, qEnd).trim();
+      items.push({
+        id: slugify(question),
+        question: question.replace(/:$/, ''),
+        answer,
+        tags: []
+      });
+    }
+
+    subcategories.push({
+      id: slugify(title.replace(/^\d+\.\s*/, '')),
+      title: title.replace(/^\d+\.\s*/, ''),
+      items
+    });
+  }
+
+  return subcategories;
+}
+
 export function slugify(text) {
   const map = {
     'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
@@ -125,17 +245,22 @@ function parseFrontend(text) {
 }
 
 export function parseDocument(source) {
-  const frontendMatch = source.match(/^FRONTEND\s*\n([\s\S]*?)(?=^BACKEND\s*$|$(?![\s\S]))/m);
+  const frontendMatch = source.match(/^FRONTEND\s*\n([\s\S]*?)\n\s*BACKEND\b/m);
   if (!frontendMatch) {
     throw new Error('FRONTEND marker bulunamadı');
   }
-  const frontendText = frontendMatch[1];
+  const backendMatch = source.match(/\bBACKEND\b([\s\S]*)$/);
+  if (!backendMatch) {
+    throw new Error('BACKEND marker bulunamadı');
+  }
 
-  const frontendSubs = parseFrontend(frontendText);
+  const frontendText = frontendMatch[1];
+  const backendText = backendMatch[1];
 
   return {
     categories: [
-      { id: 'frontend', title: 'Frontend', subcategories: frontendSubs }
+      { id: 'frontend', title: 'Frontend', subcategories: parseFrontend(frontendText) },
+      { id: 'backend',  title: 'Backend',  subcategories: parseBackend(backendText) }
     ]
   };
 }
