@@ -1,0 +1,10 @@
+{
+  "tagOverrides": {
+    "closure-mantigi-nedir-avantaji-nedir": ["closure", "scope", "encapsulation", "lexical", "private"],
+    "promise-yapisi-ve-kullanimi": ["promise", "async", "await", "then", "catch"],
+    "event-loop-call-stack-ve-promise-iliskisi": ["event-loop", "async", "microtask", "callback"],
+    "autowired-nedir": ["spring", "di", "ioc", "dependency-injection"],
+    "saga-pattern-nedir": ["saga", "microservice", "transaction", "distributed"],
+    "cqrs-command-query-responsibility-segregation-nedir": ["cqrs", "command", "query", "architecture"]
+  }
+}

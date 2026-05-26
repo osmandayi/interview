@@ -78,3 +78,27 @@ describe('parseDocument — Backend', () => {
     expect(having!.answer).toMatch(/GROUP BY/);
   });
 });
+
+describe('parseDocument — Kod Blokları ve Overrides', () => {
+  it('wraps Java code in fenced markdown block', () => {
+    const result = parseDocument(SOURCE);
+    const allItems = result.categories.flatMap((c) =>
+      c.subcategories.flatMap((s) => s.items)
+    );
+    const isSorted = allItems.find((i) => i.question.includes('isSortedasc'));
+    expect(isSorted).toBeDefined();
+    expect(isSorted!.answer).toContain('```java');
+    expect(isSorted!.answer).toContain('public boolean isSortedasc');
+    expect(isSorted!.answer).toMatch(/```\s*$/m);
+  });
+
+  it('applies tag overrides from overrides.json', () => {
+    const result = parseDocument(SOURCE);
+    const allItems = result.categories.flatMap((c) =>
+      c.subcategories.flatMap((s) => s.items)
+    );
+    const closure = allItems.find((i) => i.question.toLowerCase().includes('closure'));
+    expect(closure!.tags).toContain('scope');
+    expect(closure!.tags).toContain('encapsulation');
+  });
+});

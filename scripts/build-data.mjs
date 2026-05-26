@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -87,6 +87,14 @@ function findOccurrences(haystack, needle) {
   return positions;
 }
 
+function wrapJavaCode(answer) {
+  // Detect Java method body: optional "Java" preamble, then "public/private/static <return> name(...) { ... }"
+  const javaPattern = /(?:Java\s*)?(public\s+(?:boolean|int|void|String|static)\s+\w+\s*\([^)]*\)\s*\{[\s\S]*?^\})/m;
+  return answer.replace(javaPattern, (_match, code) => {
+    return '\n```java\n' + code.trim() + '\n```\n';
+  });
+}
+
 function parseBackend(text) {
   const flat = text.replace(/\r/g, '');
 
@@ -133,6 +141,12 @@ function parseBackend(text) {
       title: title.replace(/^\d+\.\s*/, ''),
       items
     });
+  }
+
+  for (const sub of subcategories) {
+    for (const item of sub.items) {
+      item.answer = wrapJavaCode(item.answer);
+    }
   }
 
   return subcategories;
@@ -244,6 +258,29 @@ function parseFrontend(text) {
   return subcategories;
 }
 
+function loadOverrides() {
+  const path = resolve(__dirname, 'overrides.json');
+  if (!existsSync(path)) return { tagOverrides: {} };
+  try {
+    return JSON.parse(readFileSync(path, 'utf-8'));
+  } catch {
+    return { tagOverrides: {} };
+  }
+}
+
+function applyOverrides(data, overrides) {
+  for (const cat of data.categories) {
+    for (const sub of cat.subcategories) {
+      for (const item of sub.items) {
+        if (overrides.tagOverrides?.[item.id]) {
+          item.tags = overrides.tagOverrides[item.id];
+        }
+      }
+    }
+  }
+  return data;
+}
+
 export function parseDocument(source) {
   const frontendMatch = source.match(/^FRONTEND\s*\n([\s\S]*?)\n\s*BACKEND\b/m);
   if (!frontendMatch) {
@@ -257,12 +294,13 @@ export function parseDocument(source) {
   const frontendText = frontendMatch[1];
   const backendText = backendMatch[1];
 
-  return {
+  const data = {
     categories: [
       { id: 'frontend', title: 'Frontend', subcategories: parseFrontend(frontendText) },
       { id: 'backend',  title: 'Backend',  subcategories: parseBackend(backendText) }
     ]
   };
+  return applyOverrides(data, loadOverrides());
 }
 
 // CLI entry point — detect direct invocation (node scripts/build-data.mjs ...)
