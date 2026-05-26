@@ -145,11 +145,65 @@ function parseBackend(text) {
 
   for (const sub of subcategories) {
     for (const item of sub.items) {
-      item.answer = wrapJavaCode(item.answer);
+      item.answer = wrapJavaCode(formatBackendAnswer(item.answer));
     }
   }
 
   return subcategories;
+}
+
+// Backend cevapları tek satırda sıkışmış geliyor. Bilinen bullet pattern'leri
+// öncesine paragraf kırılımı ekleyerek okunabilir hale getirir.
+function formatBackendAnswer(answer) {
+  let s = answer;
+
+  // SOLID letter enumeration: "S - ", "O - ", "L - ", "I - ", "D - "
+  s = s.replace(/([.:])\s*([SOLID])\s+-\s+(?=[A-ZÇĞİÖŞÜ])/g, '$1\n\n$2 - ');
+
+  // Parenthetical-translation bullets: "Encapsulation (Kapsülleme):", "1NF (First Normal Form):"
+  s = s.replace(
+    /([.:])\s*([\dA-ZÇĞİÖŞÜ][\wçğıöşüÇĞİÖŞÜ]*(?:\s+[\wçğıöşüÇĞİÖŞÜ]+){0,3}\s*\([A-ZÇĞİÖŞÜ][^)]{1,80}\))\s*:/g,
+    '$1\n\n$2:'
+  );
+
+  // Dotfile bullets: ".class:", ".war (Web Archive):"
+  s = s.replace(/(\.)(\.\w{2,8}(?:\s+\([A-Z][^)]+\))?)\s*:/g, '$1\n\n$2:');
+
+  // Acronym bullets: "JOIN:", "UNION:", "AOP:", "2NF:", "3NF:"
+  s = s.replace(/([.])\s*(\d?[A-Z]{2,}\d*)\s*:(?=\s+\S)/g, '$1\n\n$2:');
+
+  // CamelCase bullets: "HashMap:", "StringBuilder:", "StringBuffer:"
+  s = s.replace(
+    /([.])\s*([A-Z][a-z]+(?:[A-Z][a-z]+)+)\s*:\s+(?=\S)/g,
+    '$1\n\n$2: '
+  );
+
+  // Capitalized noun bullets (1-3 word): "Interceptor:", "Static fonksiyon:", "Integer:"
+  s = s.replace(
+    /([.])\s*([A-ZÇĞİÖŞÜ][a-zçğıöşü]+(?:\s+[a-zçğıöşü]+){0,2})\s*:\s+(?=\S)/g,
+    '$1\n\n$2: '
+  );
+
+  // Lowercase technical keyword bullets: "final:", "finally:", "int:", "static:"
+  s = s.replace(
+    /([.])\s*(final|finally|int|void|static|public|private|protected)\s*:\s+(?=\S)/g,
+    '$1\n\n$2: '
+  );
+
+  // @Annotation bullets: "@Transactional parametreleri:"
+  s = s.replace(/([.])\s*(@[A-Z]\w+\s+\w+)\s*:/g, '$1\n\n$2:');
+
+  // Comma list of patterns at the end of "Mikroservis Design Patternleri": split into bullets
+  // Pattern: 4+ comma-separated CapitalizedTerms followed by period at end of answer
+  s = s.replace(
+    /\b([A-Z][A-Za-z\s]+(?:,\s*[A-Z][A-Za-z\s/]+){3,})\.\s*$/,
+    (_, list) => {
+      const items = list.split(/,\s*/).map((x) => '• ' + x.trim());
+      return items.join('\n') + '.';
+    }
+  );
+
+  return s.trim();
 }
 
 export function slugify(text) {

@@ -57,9 +57,16 @@ function AppInner() {
 
   const selected = selectedId ? findItemById(selectedId) : null;
 
+  const handleHome = () => {
+    setView('welcome');
+    setSelectedId(null);
+    setSidebarOpen(false);
+    sessionStorage.removeItem('qa-last-viewed');
+  };
+
   return (
     <div className="h-full flex flex-col">
-      <TopBar onMenuClick={() => setSidebarOpen((o) => !o)} />
+      <TopBar onMenuClick={() => setSidebarOpen((o) => !o)} onHome={handleHome} />
 
       <div className="flex-1 flex overflow-hidden">
         <div

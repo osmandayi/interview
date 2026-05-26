@@ -2,9 +2,9 @@ import { Search, Menu, BookOpen } from 'lucide-react';
 import { useSearchContext } from '../contexts/SearchContext';
 import { ThemeToggle } from './ThemeToggle';
 
-type Props = { onMenuClick: () => void };
+type Props = { onMenuClick: () => void; onHome: () => void };
 
-export function TopBar({ onMenuClick }: Props) {
+export function TopBar({ onMenuClick, onHome }: Props) {
   const { open } = useSearchContext();
 
   return (
@@ -17,10 +17,14 @@ export function TopBar({ onMenuClick }: Props) {
         <Menu size={20} />
       </button>
 
-      <div className="flex items-center gap-2 font-semibold">
+      <button
+        onClick={onHome}
+        aria-label="Ana sayfaya dön"
+        className="flex items-center gap-2 font-semibold px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+      >
         <BookOpen size={20} className="text-blue-500" />
         <span>Interview QA</span>
-      </div>
+      </button>
 
       <button
         onClick={open}
