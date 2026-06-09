@@ -41,3 +41,23 @@ export function tokensMatch(userToken: string, keyword: string): boolean {
   }
   return false;
 }
+
+// Normalized (Turkish-folded) Turkish stop-words.
+const STOP_WORDS = new Set([
+  'bir', 've', 'ile', 'icin', 'olan', 'bu', 'su', 'da', 'de', 'ki', 'gibi',
+  'daha', 'cok', 'en', 'ama', 'veya', 'ya', 'her', 'ise', 'gore', 'kadar',
+  'sonra', 'once', 'hem', 'yani', 'tum', 'ancak', 'fakat', 'cunku', 'eger',
+  'ayrica', 'hangi', 'nedir', 'olarak', 'ise', 'yine', 'cok'
+]);
+
+function dedupe(arr: string[]): string[] {
+  return Array.from(new Set(arr));
+}
+
+export function extractKeywords(answer: string, override?: string[]): string[] {
+  if (override && override.length > 0) {
+    return dedupe(override.flatMap((k) => normalize(k)));
+  }
+  const tokens = normalize(answer);
+  return dedupe(tokens.filter((t) => t.length >= 3 && !STOP_WORDS.has(t)));
+}

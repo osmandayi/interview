@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { normalize, levenshtein, tokensMatch } from '../src/lib/scoring';
+import { extractKeywords } from '../src/lib/scoring';
 
 describe('normalize', () => {
   it('lowercases, folds Turkish chars, strips punctuation, tokenizes', () => {
@@ -35,5 +36,25 @@ describe('tokensMatch', () => {
     expect(tokensMatch('clojure', 'closure')).toBe(true);
     expect(tokensMatch('ecmascrpt', 'ecmascript')).toBe(true);
     expect(tokensMatch('cat', 'dog')).toBe(false);
+  });
+});
+
+describe('extractKeywords', () => {
+  it('drops stop-words and tokens shorter than 3 chars, dedupes', () => {
+    const answer = 'ECMAScript, JavaScript için bir standartlar bütünüdür ve standart belirler.';
+    const kw = extractKeywords(answer);
+    expect(kw).toContain('ecmascript');
+    expect(kw).toContain('javascript');
+    expect(kw).toContain('standartlar');
+    expect(kw).toContain('butunudur');
+    expect(kw).not.toContain('icin');
+    expect(kw).not.toContain('bir');
+    expect(kw).not.toContain('ve');
+    expect(kw.filter((k) => k === 'standart').length).toBeLessThanOrEqual(1);
+  });
+
+  it('uses the override list when provided', () => {
+    const kw = extractKeywords('herhangi bir cevap metni', ['Closure', 'Scope']);
+    expect(kw).toEqual(['closure', 'scope']);
   });
 });
