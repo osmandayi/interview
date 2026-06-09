@@ -61,15 +61,17 @@ export function useInterview() {
   }, [current]);
 
   const next = useCallback(() => {
-    if (queue.length === 0) {
-      setStatus('finished');
-      return;
-    }
-    setCurrent(queue[0]);
-    setQueue((q) => q.slice(1));
-    setLastResult(null);
-    setPhase('answering');
-  }, [queue]);
+    setQueue((q) => {
+      if (q.length === 0) {
+        setStatus('finished');
+        return q;
+      }
+      setCurrent(q[0]);
+      setLastResult(null);
+      setPhase('answering');
+      return q.slice(1);
+    });
+  }, []);
 
   const end = useCallback(() => setStatus('finished'), []);
 

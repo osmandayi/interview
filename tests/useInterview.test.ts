@@ -25,6 +25,7 @@ describe('useInterview', () => {
   it('never repeats a question and covers the whole pool', () => {
     const { result } = renderHook(() => useInterview());
     act(() => result.current.start({}));
+    expect(flatItems.length).toBeGreaterThan(0);
     const seen: string[] = [];
     for (let guard = 0; guard < flatItems.length + 5; guard++) {
       if (result.current.status !== 'active' || !result.current.current) break;
