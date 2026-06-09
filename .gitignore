@@ -3,3 +3,8 @@ dist
 .DS_Store
 *.log
 src/data/qa.json
+
+# TypeScript / Vite build artifacts
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
