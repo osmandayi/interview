@@ -8,9 +8,13 @@ import { SearchModal } from './components/SearchModal';
 import { QACard } from './components/QACard';
 import { Welcome } from './components/Welcome';
 import { FavoritesView } from './components/FavoritesView';
+import { InterviewSetup } from './components/InterviewSetup';
+import { InterviewView } from './components/InterviewView';
+import { InterviewSummary } from './components/InterviewSummary';
+import { useInterview } from './hooks/useInterview';
 import { findItemById } from './lib/loadData';
 
-type View = 'welcome' | 'qa' | 'favorites';
+type View = 'welcome' | 'qa' | 'favorites' | 'interview';
 
 function AppInner() {
   const [view, setView] = useState<View>('welcome');
@@ -19,6 +23,7 @@ function AppInner() {
   const { open: openSearch } = useSearchContext();
   const { toggle: toggleFav } = useFavoritesContext();
   const { toggle: toggleTheme } = useThemeContext();
+  const interview = useInterview();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -61,6 +66,7 @@ function AppInner() {
     setView('welcome');
     setSelectedId(null);
     setSidebarOpen(false);
+    interview.reset();
     sessionStorage.removeItem('qa-last-viewed');
   };
 
@@ -79,6 +85,7 @@ function AppInner() {
             onSelect={handleSelect}
             view={view === 'favorites' ? 'favorites' : 'qa'}
             onViewChange={(v) => { setView(v); setSidebarOpen(false); }}
+            onInterview={() => { interview.reset(); setView('interview'); setSidebarOpen(false); }}
           />
         </div>
 
@@ -94,10 +101,36 @@ function AppInner() {
             <Welcome
               onBrowse={handleBrowse}
               onFavorites={() => setView('favorites')}
+              onInterview={() => { interview.reset(); setView('interview'); }}
             />
           )}
           {view === 'favorites' && (
             <FavoritesView onSelect={handleSelect} />
+          )}
+          {view === 'interview' && interview.status === 'setup' && (
+            <InterviewSetup
+              onStart={(f) => interview.start(f)}
+              error={interview.setupError}
+            />
+          )}
+          {view === 'interview' && interview.status === 'active' && interview.current && (
+            <InterviewView
+              item={interview.current}
+              phase={interview.phase}
+              result={interview.lastResult}
+              remaining={interview.remaining}
+              onSubmit={interview.submit}
+              onNext={interview.next}
+              onEnd={interview.end}
+            />
+          )}
+          {view === 'interview' && interview.status === 'finished' && (
+            <InterviewSummary
+              history={interview.history}
+              averageScore={interview.averageScore}
+              onRestart={() => interview.reset()}
+              onHome={handleHome}
+            />
           )}
           {view === 'qa' && selected && (
             <div className="max-w-4xl mx-auto p-6">

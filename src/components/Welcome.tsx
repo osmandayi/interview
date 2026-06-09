@@ -1,13 +1,14 @@
-import { Search, BookOpen, Star } from 'lucide-react';
+import { Search, BookOpen, Star, Mic } from 'lucide-react';
 import { flatItems, qaData } from '../lib/loadData';
 import { useSearchContext } from '../contexts/SearchContext';
 
 type Props = {
   onBrowse: () => void;
   onFavorites: () => void;
+  onInterview: () => void;
 };
 
-export function Welcome({ onBrowse, onFavorites }: Props) {
+export function Welcome({ onBrowse, onFavorites, onInterview }: Props) {
   const { open } = useSearchContext();
   const totalQA = flatItems.length;
   const totalSubs = qaData.categories.reduce((sum, c) => sum + c.subcategories.length, 0);
@@ -20,7 +21,7 @@ export function Welcome({ onBrowse, onFavorites }: Props) {
         {totalQA} soru • {totalSubs} alt-kategori
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <button
           onClick={open}
           className="flex flex-col items-center gap-2 p-6 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
@@ -46,6 +47,14 @@ export function Welcome({ onBrowse, onFavorites }: Props) {
           <Star size={24} className="text-yellow-500" />
           <div className="font-semibold">Favorilerim</div>
           <div className="text-xs text-neutral-500">İşaretlenmiş sorular</div>
+        </button>
+        <button
+          onClick={onInterview}
+          className="flex flex-col items-center gap-2 p-6 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition"
+        >
+          <Mic size={24} className="text-green-500" />
+          <div className="font-semibold">Canlı Mülakat</div>
+          <div className="text-xs text-neutral-500">Sorulara cevap ver</div>
         </button>
       </div>
     </div>

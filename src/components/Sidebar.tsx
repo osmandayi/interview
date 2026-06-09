@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, Star } from 'lucide-react';
+import { ChevronDown, ChevronRight, Star, Mic } from 'lucide-react';
 import { qaData } from '../lib/loadData';
 import { useFavoritesContext } from '../contexts/FavoritesContext';
 
@@ -8,9 +8,10 @@ type Props = {
   onSelect: (id: string) => void;
   view: 'qa' | 'favorites';
   onViewChange: (v: 'qa' | 'favorites') => void;
+  onInterview: () => void;
 };
 
-export function Sidebar({ selectedId, onSelect, view, onViewChange }: Props) {
+export function Sidebar({ selectedId, onSelect, view, onViewChange, onInterview }: Props) {
   const { ids: favIds } = useFavoritesContext();
   const [expanded, setExpanded] = useState<Set<string>>(
     new Set(qaData.categories.map((c) => c.id))
@@ -38,6 +39,14 @@ export function Sidebar({ selectedId, onSelect, view, onViewChange }: Props) {
         >
           <Star size={16} className={view === 'favorites' ? 'fill-yellow-400 text-yellow-400' : ''} />
           Favoriler ({favIds.size})
+        </button>
+
+        <button
+          onClick={onInterview}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded text-sm font-medium mb-4 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        >
+          <Mic size={16} className="text-green-500" />
+          Canlı Mülakat
         </button>
 
         {qaData.categories.map((cat) => (
