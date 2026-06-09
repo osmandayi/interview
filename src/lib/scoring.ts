@@ -61,3 +61,26 @@ export function extractKeywords(answer: string, override?: string[]): string[] {
   const tokens = normalize(answer);
   return dedupe(tokens.filter((t) => t.length >= 3 && !STOP_WORDS.has(t)));
 }
+
+export type ScoreResult = {
+  score: number;       // 0-100
+  matched: string[];   // keywords the user covered
+  missed: string[];    // keywords the user missed
+};
+
+export function scoreAnswer(userText: string, keywords: string[]): ScoreResult {
+  const userTokens = dedupe(normalize(userText));
+  const matched: string[] = [];
+  const missed: string[] = [];
+
+  for (const kw of keywords) {
+    if (userTokens.some((ut) => tokensMatch(ut, kw))) matched.push(kw);
+    else missed.push(kw);
+  }
+
+  const score = keywords.length === 0
+    ? 0
+    : Math.round((matched.length / keywords.length) * 100);
+
+  return { score, matched, missed };
+}

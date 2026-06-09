@@ -58,3 +58,37 @@ describe('extractKeywords', () => {
     expect(kw).toEqual(['closure', 'scope']);
   });
 });
+
+import { scoreAnswer } from '../src/lib/scoring';
+
+describe('scoreAnswer', () => {
+  const keywords = ['ecmascript', 'javascript', 'standart'];
+
+  it('returns 100 when all keywords are present', () => {
+    const r = scoreAnswer('ecmascript javascript standart', keywords);
+    expect(r.score).toBe(100);
+    expect(r.missed).toEqual([]);
+  });
+
+  it('counts each keyword at most once (duplicate ECMA problem)', () => {
+    const r = scoreAnswer('ecmascript ecmascript', keywords);
+    expect(r.matched).toEqual(['ecmascript']);
+    expect(r.score).toBe(33);
+  });
+
+  it('tolerates typos and inflections', () => {
+    const r = scoreAnswer('ecmascrpt javascriptin standartlar', keywords);
+    expect(r.score).toBe(100);
+  });
+
+  it('returns 0 for empty answer', () => {
+    const r = scoreAnswer('', keywords);
+    expect(r.score).toBe(0);
+    expect(r.matched).toEqual([]);
+    expect(r.missed).toEqual(keywords);
+  });
+
+  it('returns 0 when there are no keywords', () => {
+    expect(scoreAnswer('anything', []).score).toBe(0);
+  });
+});
