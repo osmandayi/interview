@@ -19,6 +19,7 @@ export type QAItem = {
   question: string;
   answer: string;
   tags?: string[];
+  keywords?: string[];
 };
 
 export type FlatQAItem = QAItem & {

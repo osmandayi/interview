@@ -329,6 +329,9 @@ function applyOverrides(data, overrides) {
         if (overrides.tagOverrides?.[item.id]) {
           item.tags = overrides.tagOverrides[item.id];
         }
+        if (overrides.keywordOverrides?.[item.id]) {
+          item.keywords = overrides.keywordOverrides[item.id];
+        }
       }
     }
   }
