@@ -23,13 +23,16 @@ function scoreColor(score: number): string {
 
 export function InterviewView({ item, phase, result, remaining, onSubmit, onNext, onEnd }: Props) {
   const [text, setText] = useState('');
+  const [submittedEmpty, setSubmittedEmpty] = useState(false);
 
   const handleSubmit = () => {
+    setSubmittedEmpty(text.trim() === '');
     onSubmit(text);
   };
 
   const handleNext = () => {
     setText('');
+    setSubmittedEmpty(false);
     onNext();
   };
 
@@ -77,6 +80,12 @@ export function InterviewView({ item, phase, result, remaining, onSubmit, onNext
               {result.matched.length}/{result.matched.length + result.missed.length} anahtar kelime
             </span>
           </div>
+
+          {submittedEmpty && (
+            <div className="mb-4 text-sm text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 rounded px-3 py-2">
+              Boş cevap gönderdin — bu yüzden skor %0. Bildiğin kadarını yazmayı dene.
+            </div>
+          )}
 
           {result.matched.length > 0 && (
             <div className="mb-3">
