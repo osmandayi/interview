@@ -47,7 +47,7 @@ const STOP_WORDS = new Set([
   'bir', 've', 'ile', 'icin', 'olan', 'bu', 'su', 'da', 'de', 'ki', 'gibi',
   'daha', 'cok', 'en', 'ama', 'veya', 'ya', 'her', 'ise', 'gore', 'kadar',
   'sonra', 'once', 'hem', 'yani', 'tum', 'ancak', 'fakat', 'cunku', 'eger',
-  'ayrica', 'hangi', 'nedir', 'olarak', 'ise', 'yine', 'cok'
+  'ayrica', 'hangi', 'nedir', 'olarak', 'yine'
 ]);
 
 function dedupe(arr: string[]): string[] {
