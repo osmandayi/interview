@@ -365,9 +365,20 @@ const invokedPath = process.argv[1] ? pathToFileUrlSafe(process.argv[1]) : '';
 if (import.meta.url === invokedPath) {
   const verbose = process.argv.includes('--verbose');
   const SRC = 'C:/Users/Pc/Desktop/full_stack.txt';
+  const outPath = resolve(__dirname, '..', 'src', 'data', 'qa.json');
+
+  // The source file lives outside the repo. On a fresh clone it is absent —
+  // in that case keep the committed qa.json instead of crashing the build.
+  if (!existsSync(SRC)) {
+    if (existsSync(outPath)) {
+      console.warn(`⚠ Kaynak bulunamadı (${SRC}). Mevcut qa.json korunuyor, yeniden üretilmedi.`);
+      process.exit(0);
+    }
+    throw new Error(`Kaynak dosya yok ve üretilmiş qa.json da yok: ${SRC}`);
+  }
+
   const text = readFileSync(SRC, 'utf-8');
   const data = parseDocument(text);
-  const outPath = resolve(__dirname, '..', 'src', 'data', 'qa.json');
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, JSON.stringify(data, null, 2), 'utf-8');
 

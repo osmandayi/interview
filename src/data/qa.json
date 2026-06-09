@@ -1,0 +1,450 @@
+{
+  "categories": [
+    {
+      "id": "frontend",
+      "title": "Frontend",
+      "subcategories": [
+        {
+          "id": "javascript-temelleri-ve-mimari",
+          "title": "JavaScript Temelleri ve Mimari",
+          "items": [
+            {
+              "id": "javascript-nedir-nerelerde-kullanilir",
+              "question": "JavaScript Nedir? Nerelerde kullanılır?",
+              "answer": "JavaScript, web sayfalarına dinamiklik katan, tarayıcı üzerinde (client-side) ve Node.js sayesinde sunucu tarafında (server-side) çalışabilen, yüksek seviyeli ve yorumlanan (interpreted) bir programlama dilidir. Günümüzde web uygulamalarından mobil uygulamalara (React Native), masaüstü programlardan (Electron) backend servislerine kadar geniş bir yelpazede kullanılır.",
+              "tags": []
+            },
+            {
+              "id": "ecmascript-es-kavrami-nedir",
+              "question": "ECMAScript (ES) Kavramı Nedir?",
+              "answer": "ECMAScript, JavaScript'in temelini ve kurallarını belirleyen bir standartlar bütünüdür. JavaScript ise bu standartların bir uygulamasıdır (implementation). Dile eklenecek yeni özellikler (örneğin ES6 ile gelen let/const, arrow functions vb.) bu standartlarla belirlenir.",
+              "tags": []
+            },
+            {
+              "id": "variable-tipleri-nelerdir-var-let-const",
+              "question": "Variable Tipleri Nelerdir? (var, let, const)",
+              "answer": "const: Değeri sonradan değiştirilemeyecek (immutable) değişkenler için kullanılır. Block-scoped'dur.\n\nlet: Değeri sonradan değiştirilebilecek değişkenler için kullanılır. Block-scoped'dur.\n\nvar: Eski standarttır. Function-scoped'dur.",
+              "tags": []
+            },
+            {
+              "id": "neden-var-birakilip-let-ve-const-a-gecildi",
+              "question": "Neden var Bırakılıp let ve const'a Geçildi?",
+              "answer": "var block-scope (süslü parantez içi) kuralını tanımaz, tanımlandığı bloktan dışarı sızar. Ayrıca yaşam döngüsü bitse bile memory'de (stack'te) yer tutmaya devam ederek bellek şişmelerine yol açar. Hoisting (yukarı çekilme) özelliği nedeniyle tanımlanmadan önce kullanıldığında hata vermek yerine undefined döner, bu da debug edilmesi zor bug'lar yaratır. Bu yüzden daha güvenli olan let ve const tercih edilir.",
+              "tags": []
+            },
+            {
+              "id": "primitive-data-tipleri-nelerdir",
+              "question": "Primitive Data Tipleri Nelerdir?",
+              "answer": "String, Number, Boolean, Undefined, Null, Symbol ve BigInt. Bu tipler bellekte (stack) doğrudan değerleriyle tutulurlar (pass-by-value).",
+              "tags": []
+            },
+            {
+              "id": "closure-mantigi-nedir-avantaji-nedir",
+              "question": "Closure Mantığı Nedir? Avantajı Nedir?",
+              "answer": "Bir fonksiyonun, kendi kapsamı (lexical scope) dışındaki değişkenlere, dıştaki fonksiyon çalışmasını bitirse bile erişebilme yeteneğidir (Fonksiyon içinde fonksiyon çağırma durumu).\nAvantajı: En büyük avantajı veri gizliliğidir (Encapsulation). Dışarıdan doğrudan erişilemeyen, sadece sizin belirlediğiniz metotlarla değiştirilebilen \"private\" değişkenler yaratmamızı sağlar.",
+              "tags": [
+                "closure",
+                "scope",
+                "encapsulation",
+                "lexical",
+                "private"
+              ]
+            },
+            {
+              "id": "iife-immediately-invoked-function-expression-nedir",
+              "question": "IIFE (Immediately Invoked Function Expression) Nedir?",
+              "answer": "Tanımlandığı anda kendi kendini çağıran ve çalıştıran fonksiyonlardır. Temel amacı değişkenleri izole etmek ve global scope'u kirletmemektir.",
+              "tags": []
+            },
+            {
+              "id": "promise-yapisi-ve-kullanimi",
+              "question": "Promise Yapısı ve Kullanımı",
+              "answer": "JavaScript asenkron çalıştığı için; API istekleri, dosya okuma veya zaman alan işlemleri yönetmek adına Promise yapısına ihtiyaç duyarız. Bir işlemin gelecekte başarılı (resolve) veya başarısız (reject) sonuçlanacağına dair bir \"söz\"dür.\nNasıl Çözülür:\n\nGeleneksel: .then() (başarılıysa) ve .catch() (hatalıysa) zincirleriyle.\n\nModern: async/await yapısıyla (genellikle try...catch blokları içinde) çok daha senkron kod okunabilirliğinde çözülür.",
+              "tags": [
+                "promise",
+                "async",
+                "await",
+                "then",
+                "catch"
+              ]
+            },
+            {
+              "id": "event-loop-call-stack-ve-promise-iliskisi",
+              "question": "Event Loop, Call Stack ve Promise İlişkisi",
+              "answer": "JavaScript \"single-threaded\" (tek iş parçacıklı) bir dildir. Senkron kodlar Call Stack'te sırayla çalışır. Asenkron işlemler (API istekleri, setTimeout vb.) Web API'ye devredilir. İşlem bitince, Callback Queue veya Microtask Queue'ya (Promise'ler buraya düşer ve önceliklidir) alınırlar. Call Stack boşaldığı anda Event Loop, kuyruktaki işlemleri sırayla Call Stack'e taşıyarak çalıştırır.",
+              "tags": [
+                "event-loop",
+                "async",
+                "microtask",
+                "callback"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "react-mimarisi-ve-ekosistemi",
+          "title": "React Mimarisi ve Ekosistemi",
+          "items": [
+            {
+              "id": "react-nedir-kim-gelistirdi",
+              "question": "React Nedir? Kim Geliştirdi?",
+              "answer": "Kullanıcı arayüzleri (UI) oluşturmak için kullanılan, Facebook (Meta) tarafından geliştirilmiş, açık kaynaklı ve \"Component\" (bileşen) tabanlı bir JavaScript kütüphanesidir.",
+              "tags": []
+            },
+            {
+              "id": "react-calisma-mantigi-nasildir",
+              "question": "React Çalışma Mantığı Nasıldır?",
+              "answer": "React, performansı yüksek tutmak için Virtual DOM (Sanal DOM) kullanır. Gerçek DOM'u manipüle etmek çok maliyetlidir. React, UI'ın bir kopyasını bellekte tutar. Bir state veya prop değiştiğinde yeni bir Virtual DOM oluşturur, eski ile yeniyi karşılaştırır (Diffing algoritması) ve sadece değişen kısımları gerçek DOM'a günceller (Reconciliation).",
+              "tags": []
+            },
+            {
+              "id": "jsx-nedir-syntactic-sugar-nedir",
+              "question": "JSX Nedir? Syntactic Sugar Nedir?",
+              "answer": "JSX (JavaScript XML), JavaScript dosyaları içinde HTML benzeri yapılar yazmamızı sağlayan bir syntax (sözdizimi) uzantısıdır. Aslında bir dilden ziyade bir Syntactic Sugar'dır (Sözdizimsel Şeker); yani kodun okunabilirliğini ve yazımını kolaylaştıran, arka planda karmaşık React.createElement() fonksiyonlarına dönüştürülen tatlı bir yazım kuralıdır.",
+              "tags": []
+            },
+            {
+              "id": "state-ve-prop-nedir",
+              "question": "State ve Prop Nedir?",
+              "answer": "State: Bir component'in kendi içinde tuttuğu, değişebilen ve değiştiğinde o component'in baştan çizilmesini (render) sağlayan veridir.\n\nProp (Properties): Component'ler arası (genellikle Parent'tan Child'a) veri taşımak için kullanılan, alan taraf için read-only (salt okunur) olan verilerdir.",
+              "tags": []
+            },
+            {
+              "id": "render-tetiklenmesi-nedir",
+              "question": "Render Tetiklenmesi Nedir?",
+              "answer": "Bir component'in, görsel arayüzü (UI) güncel verilerle yeniden hesaplayıp ekrana çizme sürecidir. Genellikle component'in kendi state'i değiştiğinde veya üst component'ten gelen props değiştiğinde tetiklenir.",
+              "tags": []
+            },
+            {
+              "id": "class-component-ve-functional-component-gecisi",
+              "question": "Class Component ve Functional Component Geçişi",
+              "answer": "Eskiden, state tutabilmek ve lifecycle (yaşam döngüsü) metotlarına erişebilmek için OOP mantığıyla \"Class Component\" yazmak zorunluydu. Ancak this bağlamının karmaşıklığı ve kod uzunluğu dezavantajdı. React 16.8 ile Hook'lar geldi. Hook'lar sayesinde \"Functional Component'ler\" de state ve lifecycle özelliklerine kavuştu. Daha az kod (boilerplate), daha iyi okunabilirlik ve kolay test edilebilirlik için yerini tamamen functional yapılara bıraktı.",
+              "tags": []
+            },
+            {
+              "id": "hook-lar-nedir-ve-avantaji-nedir",
+              "question": "Hook'lar Nedir ve Avantajı Nedir?",
+              "answer": "Hook'lar, functional component'lerde React state ve lifecycle özelliklerini \"kancalamamızı\" sağlayan özel fonksiyonlardır. State mantığını component içinden çıkarıp tekrar kullanılabilir (custom hook) hale getirmemizi sağlar ve class yapısının karmaşasını bitirir.\nNot: Hook içinde component yazmak teknik olarak yapılabilir ama her render'da yeniden oluşturulacağı için çok ciddi performans ve state kaybı yaratır; kesinlikle antipattern'dir.",
+              "tags": []
+            },
+            {
+              "id": "useeffect-nedir",
+              "question": "useEffect Nedir?",
+              "answer": "Component'in dış dünyayla etkileşime girmesini, yani \"Side Effect\" (yan etki) yaratmasını sağlar. Temel kullanım amacı; API'den veri çekmek, DOM manipülasyonu yapmak veya event listener eklemek/kaldırmaktır.",
+              "tags": []
+            },
+            {
+              "id": "usememo-ve-usecallback-amaci",
+              "question": "useMemo ve useCallback Amacı",
+              "answer": "İkisi de performans optimizasyonu (gereksiz render'ları önleme) içindir.\n\nuseMemo: Maliyetli bir hesaplamanın sonucunu bellekte tutar (cache).\n\nuseCallback: Bir fonksiyonun referansını bellekte tutar. Özellikle child component'lere fonksiyon geçirirken veya hücre boyutu hesaplamaları (virtual scrolling vb.) gibi ağır listelerde gereksiz render'ı engeller.",
+              "tags": []
+            },
+            {
+              "id": "lifecycle-denkligi-class-vs-functional",
+              "question": "Lifecycle Denkliği (Class vs Functional)",
+              "answer": "componentDidMount (İlk yüklenme) 👉 useEffect(() => {...}, [])\n\ncomponentDidUpdate (Güncellenme) 👉 useEffect(() => {...}, [state1, state2])\n\ncomponentWillUnmount (Ölüm/Temizlik) 👉 useEffect(() => { return () => {...} }, [])",
+              "tags": []
+            },
+            {
+              "id": "usereducer-nerede-kullanilir",
+              "question": "useReducer Nerede Kullanılır?",
+              "answer": "useState'in gelişmiş alternatifidir. Birbirine bağlı birden fazla state varsa veya bir sonraki state, karmaşık bir \"action\" yapısına göre belirleniyorsa kullanılır. State yönetimini dışarıdaki bir \"reducer\" fonksiyonuna taşıyarak kodu daha öngörülebilir kılar.",
+              "tags": []
+            },
+            {
+              "id": "context-api-vs-redux",
+              "question": "Context API vs Redux",
+              "answer": "Context API: Tema değişikliği, dil seçimi, kullanıcı oturumu gibi nispeten statik ve uygulamanın genelini ilgilendiren durumlar için idealdir (Prop drilling'i önler). Ancak sık güncellenen verilerde tüm alt ağacı render edeceği için performansı düşürebilir.\n\nRedux: Çok sık güncellenen, karmaşık state mantığı barındıran, büyük ölçekli ve öngörülebilirlik (time-travel debugging) gerektiren projelerde avantajlıdır.",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "en-iyi-pratikler-ve-proje-mimarisi",
+          "title": "En İyi Pratikler ve Proje Mimarisi",
+          "items": [
+            {
+              "id": "react-te-dikkat-edilmesi-ve-kacinilmasi-gerekenler",
+              "question": "React'te Dikkat Edilmesi ve Kaçınılması Gerekenler",
+              "answer": "Gereksiz render'lardan kaçınılmalı. State, sadece ihtiyaç duyan en alt component seviyesinde tutulmalı.\n\nBüyük listelerde performansı korumak için sanallaştırma (virtual scrolling) yapılmalı ve elemanlara benzersiz key prop'ları verilmeli.\n\nuseMemo ve useCallback ezbere her yere yazılmamalı, sadece ölçülebilir performans darboğazlarında kullanılmalı.\n\nComponent'ler \"Single Responsibility\" (Tek Sorumluluk) prensibine uymalı, devasa component'ler yerine modüler ve configurable (yapılandırılabilir) küçük component'ler yazılmalıdır.",
+              "tags": []
+            },
+            {
+              "id": "iyi-bir-proje-nedir",
+              "question": "İyi Bir Proje Nedir?",
+              "answer": "İyi bir proje sadece \"çalışan\" kod değildir. Kodun okunabilir, sürdürülebilir ve yeni takım arkadaşları için anlaşılabilir olmasıdır. UI kütüphaneleri (MUI, Shadcn vb.) ve araçlar projeye uygun seçilmiş, tekrar kullanılabilir (reusable) bileşen mimarisi doğru kurgulanmış, klasör yapısı net ve performans optimizasyonları (temiz kod prensipleri) göz ardı edilmeden geliştirilmiş projedir.",
+              "tags": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "title": "Backend",
+      "subcategories": [
+        {
+          "id": "java-core-ve-temel-kavramlar",
+          "title": "Java Core ve Temel Kavramlar",
+          "items": [
+            {
+              "id": "integer-ve-int-farki",
+              "question": "Integer ve int farkı",
+              "answer": "int: Bir primitive (ilkel) veri tipidir. Sadece sayısal bir değer tutar, metotları yoktur ve null değer alamaz (varsayılanı 0'dır).\n\nInteger: int tipinin Wrapper (sarmalayıcı) sınıfıdır. Bir nesnedir, null değer alabilir ve içinde veri dönüştürme gibi yardımcı metotlar barındırır.",
+              "tags": []
+            },
+            {
+              "id": "java-hashmap-ve-list-farki",
+              "question": "Java HashMap ve List farkı",
+              "answer": "List: Elemanları eklenme sırasına göre index bazlı tutar. Aynı elemandan birden fazla (duplicate) bulunabilir.\n\nHashMap: Verileri Key-Value (Anahtar-Değer) çiftleri halinde tutar. Anahtarlar benzersiz (unique) olmak zorundadır. Sıralı olmak zorunda değildir (eklenme sırasını garanti etmez).",
+              "tags": []
+            },
+            {
+              "id": "hashmap-ve-list-eleman-ekleme-cikarma-metotlari",
+              "question": "HashMap ve List Eleman Ekleme/Çıkarma Metotları",
+              "answer": "List: Ekleme için add(value), çıkarma için remove(index) veya remove(Object) kullanılır.\n\nHashMap: Ekleme için put(key, value), çıkarma için remove(key) kullanılır.",
+              "tags": []
+            },
+            {
+              "id": "final-ve-finally-farki",
+              "question": "Final ve Finally farkı",
+              "answer": "final: Bir anahtar kelimedir. Bir değişkene atanırsa o değişkenin değeri değiştirilemez (sabit olur). Bir metoda atanırsa Override edilemez. Bir sınıfa atanırsa Inherit (kalıtım) edilemez.\n\nfinally: try-catch hata yakalama bloklarının sonuna eklenen ve hata fırlatılsın veya fırlatılmasın her durumda çalışan kod bloğudur (genellikle kaynakları/bağlantıları kapatmak için kullanılır).",
+              "tags": []
+            },
+            {
+              "id": "metot-overloading-asiri-yukleme-nedir",
+              "question": "Metot Overloading (Aşırı Yükleme) nedir?",
+              "answer": "Aynı sınıf içinde, aynı isimde fakat farklı parametre listelerine (farklı sayı veya tipte argümanlara) sahip birden fazla metot tanımlanmasıdır.",
+              "tags": []
+            },
+            {
+              "id": "bir-class-birden-fazla-class-i-extend-edebilir-mi",
+              "question": "Bir class birden fazla class'ı extend edebilir mi?",
+              "answer": "Java'da hayır. Buna \"Multiple Inheritance\" denir ve \"Diamond Problemi\"ne yol açtığı için Java sınıflar bazında bunu desteklemez. Ancak bir sınıf birden fazla Interface'i implement edebilir.",
+              "tags": []
+            },
+            {
+              "id": "static-ve-normal-fonksiyon-nasil-cagrilir",
+              "question": "Static ve Normal fonksiyon nasıl çağrılır?",
+              "answer": "Static fonksiyon: Sınıfa aittir. Sınıftan nesne (instance) oluşturmaya gerek kalmadan, doğrudan SinifAdi.fonksiyonAdi() şeklinde çağrılır.\n\nNormal fonksiyon: Nesneye aittir. Kullanmak için Sinif nesne = new Sinif(); nesne.fonksiyonAdi(); şeklinde bir instance oluşturulmalıdır.",
+              "tags": []
+            },
+            {
+              "id": "string-stringbuilder-stringbuffer-farklari",
+              "question": "String, StringBuilder, StringBuffer farkları",
+              "answer": "String: Immutable (değiştirilemez). Üzerinde yapılan her değişiklik bellekte (String Pool) yeni bir nesne oluşturur.\n\nStringBuilder: Mutable (değiştirilebilir). String birleştirme işlemleri için çok hızlıdır ancak thread-safe (iş parçacığı güvenli) değildir.\n\nStringBuffer: Mutable (değiştirilebilir). Metotları synchronized olduğu için thread-safe'tir, ancak StringBuilder'dan daha yavaştır.",
+              "tags": []
+            },
+            {
+              "id": "java-ve-class-farki-nedir",
+              "question": ".java ve .class farkı nedir?",
+              "answer": ".java: Geliştiricinin yazdığı, insanların okuyabildiği kaynak (source) kod dosyasıdır.\n\n.class: .java dosyasının derleyici (compiler) tarafından derlenmiş halidir. İçerisinde JVM'in (Java Virtual Machine) anlayabileceği bytecode bulunur.",
+              "tags": []
+            },
+            {
+              "id": "jar-war-ear-farki-ve-ne-olduklari",
+              "question": ".jar, .war, .ear farkı ve ne oldukları",
+              "answer": ".jar (Java Archive): Java kütüphanelerini veya masaüstü/konsol uygulamalarını paketlemek için kullanılır.\n\n.war (Web Archive): İçinde JSP, HTML, JS ve derlenmiş Java kodlarını barındıran web uygulaması paketidir. Tomcat gibi web sunucularında çalışır.\n\n.ear (Enterprise Archive): İçerisinde .jar ve .war modüllerini, EJB'leri (Enterprise JavaBeans) barındıran büyük ölçekli kurumsal uygulama paketleridir.",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "spring-framework-ve-mikroservisler",
+          "title": "Spring Framework ve Mikroservisler",
+          "items": [
+            {
+              "id": "autowired-nedir",
+              "question": "@Autowired nedir?",
+              "answer": "Spring framework'ünde \"Dependency Injection\" (Bağımlılık Enjeksiyonu) işlemini otomatik yapmak için kullanılır. İlgili nesnenin/bean'in arka planda Spring IoC Container tarafından yaratılıp koda enjekte edilmesini sağlar.",
+              "tags": [
+                "spring",
+                "di",
+                "ioc",
+                "dependency-injection"
+              ]
+            },
+            {
+              "id": "entity-ve-repository-nedir",
+              "question": "Entity ve Repository nedir?",
+              "answer": "Entity: Veritabanındaki bir tabloya (ve o tablonun sütunlarına) karşılık gelen Java sınıfıdır.\n\nRepository: Entity'ler üzerinde CRUD (Create, Read, Update, Delete) veritabanı işlemlerini gerçekleştirdiğimiz veri erişim (Data Access) katmanıdır.",
+              "tags": []
+            },
+            {
+              "id": "service-registry-nedir",
+              "question": "Service Registry nedir?",
+              "answer": "Mikroservis mimarisinde, tüm servislerin kendi IP adresi ve port bilgilerini kaydettirdiği merkezi bir \"rehber\"dir (Örn: Eureka Server). Servisler birbirleriyle iletişim kurmak istediklerinde bu rehbere bakarlar.",
+              "tags": []
+            },
+            {
+              "id": "merkezi-loglama-nasil-yapilir-interceptor-aop",
+              "question": "Merkezi loglama nasıl yapılır? (Interceptor, AOP)",
+              "answer": "Gelen her isteği tek tek metotların içine log kodları yazarak takip etmek yerine, kod tekrarını önlemek için merkezi bir yapı kurulur.\n\nInterceptor: Spring'in HandlerInterceptor arayüzü ile gelen HTTP istekleri Controller'a ulaşmadan önce veya sonra yakalanıp loglanabilir.\n\nAOP (Aspect-Oriented Programming): @Before, @After, @Around gibi anotasyonlarla, belirli metotlar çalıştığında araya girerek (örneğin tüm controller metotları çalışmadan önce) loglama işleminin otomatik ve merkezi olarak yapılmasını sağlar.",
+              "tags": []
+            },
+            {
+              "id": "aspect-oriented-programming-aop-nedir",
+              "question": "Aspect Oriented Programming (AOP) nedir?",
+              "answer": "Uygulamanın ana iş mantığından (business logic) bağımsız olan, çapraz kesen ilgilerin (cross-cutting concerns; loglama, yetkilendirme, transaction yönetimi vb.) modülerleştirilmesini sağlayan bir programlama paradigmasıdır.",
+              "tags": []
+            },
+            {
+              "id": "spring-core-genel",
+              "question": "Spring Core Genel",
+              "answer": "Spring framework'ünün kalbidir. Inversion of Control (IoC) ve Dependency Injection (DI) mantığıyla uygulamanın bağımlılıklarını yöneten, Bean'lerin yaşam döngüsünü kontrol eden temel modüldür.",
+              "tags": []
+            },
+            {
+              "id": "transaction-nedir-anotasyon-hangi-parametreleri-alir",
+              "question": "Transaction nedir? Anotasyon hangi parametreleri alır?",
+              "answer": "Transaction: Bir iş mantığının \"ya hep ya hiç\" (ACID) prensibiyle çalışmasını sağlar. Birden fazla veritabanı işlemi varsa, hepsi başarılı olduğunda veri kaydedilir (commit), biri bile hata alırsa tüm işlemler geri alınır (rollback).\n\n@Transactional parametreleri: propagation (işlem yayılımı - örn: yeni bir transaction mı açılsın var olan mı kullanılsın), isolation (izolasyon seviyesi), readOnly (sadece okuma yapılacaksa performansı artırır), rollbackFor (hangi exception'larda rollback yapılacağı), noRollbackFor.",
+              "tags": []
+            },
+            {
+              "id": "resilience4j",
+              "question": "Resilience4j",
+              "answer": "Mikroservis sistemlerinde hata toleransı sağlamak için kullanılan hafif bir kütüphanedir. Circuit Breaker (Devre Kesici), Rate Limiter, Retry ve TimeLimiter gibi özellikleri destekler.",
+              "tags": []
+            },
+            {
+              "id": "zipkin",
+              "question": "Zipkin",
+              "answer": "Mikroservisler arası istekleri izlemek için kullanılan bir \"Distributed Tracing\" (Dağıtık İzleme) sistemidir. Bir isteğin sistemde hangi servislerde ne kadar zaman harcadığını bulmayı ve hataları tespit etmeyi sağlar.",
+              "tags": []
+            },
+            {
+              "id": "grafana",
+              "question": "Grafana",
+              "answer": "Zaman serisi verilerini (örneğin Prometheus'tan gelen metrikleri), logları ve uygulama durumlarını grafikler, tablolar ve anlık gösterge panelleri (dashboards) haline getirerek görselleştiren bir analiz aracıdır.",
+              "tags": []
+            },
+            {
+              "id": "mikroservis-design-patternleri-nelerdir",
+              "question": "Mikroservis Design Patternleri Nelerdir?",
+              "answer": "• API Gateway\n• Service Discovery\n• Circuit Breaker\n• Saga\n• CQRS\n• Database per Service\n• Event Sourcing\n• Bulkhead\n• Strangler Fig.",
+              "tags": []
+            },
+            {
+              "id": "saga-pattern-nedir",
+              "question": "Saga Pattern nedir?",
+              "answer": "Mikroservis mimarisinde, farklı servislerin kendi lokal veritabanları olduğu senaryolarda \"dağıtık transaction\" (distributed transaction) yönetimini sağlamak için kullanılan desendir. Bir adım hata verirse, önceki servislerin başarılı olan işlemlerini geri almak için \"compensating\" (telafi edici) transaction'lar tetiklenir.",
+              "tags": [
+                "saga",
+                "microservice",
+                "transaction",
+                "distributed"
+              ]
+            },
+            {
+              "id": "cqrs-command-query-responsibility-segregation-nedir",
+              "question": "CQRS (Command Query Responsibility Segregation) nedir?",
+              "answer": "Veri okuma (Query) işlemleri ile veri yazma/güncelleme (Command) işlemlerinin birbirinden tamamen farklı modellere, hatta farklı veritabanlarına ayrılması mimarisidir. Performansı ve ölçeklenebilirliği artırır.",
+              "tags": [
+                "cqrs",
+                "command",
+                "query",
+                "architecture"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sql-ve-veritabani",
+          "title": "SQL ve Veritabanı",
+          "items": [
+            {
+              "id": "having-nedir",
+              "question": "HAVING nedir?",
+              "answer": "GROUP BY kullanılarak gruplandırılmış veriler üzerinde filtreleme yapmak için kullanılır. WHERE koşulu kayıtları gruplamadan önce, HAVING ise grupladıktan sonra çalışır.",
+              "tags": []
+            },
+            {
+              "id": "join-ve-union-nedir",
+              "question": "JOIN ve UNION nedir?",
+              "answer": "JOIN: Farklı tablolardaki ilişkili verileri, ortak bir sütun üzerinden birleştirerek yan yana (sütunları artırarak) getirir.\n\nUNION: İki veya daha fazla SELECT sorgusunun sonucunu alt alta (satırları artırarak) birleştirir. Sorguların aynı sayıda ve benzer veri tipinde sütunlara sahip olması gerekir. Mükerrer (tekrar eden) kayıtları teke düşürür (UNION ALL tümünü getirir).",
+              "tags": []
+            },
+            {
+              "id": "sql-normalizasyon-adimlari",
+              "question": "SQL Normalizasyon Adımları",
+              "answer": "Veri tekrarını (redundancy) en aza indirmek ve veri bütünlüğünü korumak için tablo tasarlama sürecidir.\n\n1NF (First Normal Form): Tablodaki her hücrede sadece tek (atomik) bir değer olmalıdır ve birbirini tekrar eden sütunlar bulunmamalıdır.\n\n2NF: 1NF kurallarını sağlamalıdır ve tablodaki \"anahtar olmayan\" her sütun, \"Birincil Anahtarın (Primary Key)\" tamamına tam bağımlı olmalıdır (Kısmi bağımlılık olmamalıdır).\n\n3NF: 2NF kurallarını sağlamalıdır ve anahtar olmayan hiçbir sütun, başka bir anahtar olmayan sütuna bağımlı olmamalıdır (Geçişli/Transitive bağımlılık olmamalıdır).",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "veri-yapilari-ve-algoritmalar",
+          "title": "Veri Yapıları ve Algoritmalar",
+          "items": [
+            {
+              "id": "queue-ve-stack-farki-nedir",
+              "question": "Queue ve Stack farkı nedir?",
+              "answer": "Queue (Kuyruk): FIFO (First In First Out) yani \"İlk Giren İlk Çıkar\" prensibiyle çalışır. Bilet kuyruğu mantığıdır. Ekleme sona, çıkarma baştan yapılır.\n\nStack (Yığın): LIFO (Last In First Out) yani \"Son Giren İlk Çıkar\" prensibiyle çalışır. Üst üste dizilmiş tabaklar mantığıdır. Hem ekleme hem çıkarma en üstten (sondan) yapılır.",
+              "tags": []
+            },
+            {
+              "id": "o-n-ve-o-n-2-nedir",
+              "question": "$O(n)$ ve $O(n^2)$ nedir?",
+              "answer": "Algoritmaların Zaman Karmaşıklığını (Time Complexity) ifade eden Big O Notation değerleridir.$O(n)$: Doğrusal (Linear) zaman. Çalışma süresi veri boyutuyla doğru orantılı artar. Dizideki her elemanı tek bir for döngüsüyle gezmek buna örnektir.$O(n^2)$: Karesel (Quadratic) zaman. Veri boyutu arttıkça çalışma süresi karesel olarak artar. Genellikle iç içe iki for döngüsü kullanıldığında oluşur (Örn: Bubble Sort). Performans açısından $O(n)$'e göre daha maliyetlidir.",
+              "tags": []
+            },
+            {
+              "id": "stream-nedir-ve-metotlari-nelerdir",
+              "question": "Stream nedir ve metotları nelerdir?",
+              "answer": "Java 8 ile gelen, koleksiyonlar ve diziler üzerinde veri işleme, filtreleme, dönüştürme işlemlerini fonksiyonel ve çok daha kısa kodla (deklaratif) yapmamızı sağlayan bir API'dir.\n\nAra Metotlar (Intermediate): filter(), map(), sorted(), distinct(), limit(). (Stream dönerler).\n\nSonlandırıcı Metotlar (Terminal): collect(), forEach(), reduce(), count(). (Stream'i sonlandırıp sonucu üretirler).",
+              "tags": []
+            },
+            {
+              "id": "algoritma-sorusu-boolean-issortedasc-int-arr",
+              "question": "Algoritma Sorusu: boolean isSortedasc(int[] arr)",
+              "answer": "Soru: Verilen bir tam sayı dizisinin artan sırada (ascending) sıralanıp sıralanmadığını kontrol eden algoritma.\n```java\npublic boolean isSortedasc(int[] arr) {\n    // Boş dizi veya tek elemanlı dizi zaten sıralıdır\n    if (arr == null || arr.length <= 1) {\n        return true;\n    }\n\n    // Diziyi baştan sona dön\n    for (int i = 0; i < arr.length - 1; i++) {\n        // Eğer geçerli eleman bir sonrakinden büyükse, sıralama bozulmuştur\n        if (arr[i] > arr[i + 1]) {\n            return false;\n        }\n    }\n\n    return true;\n}\n```\n",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "yazilim-muhendisligi-ve-metodolojiler",
+          "title": "Yazılım Mühendisliği ve Metodolojiler",
+          "items": [
+            {
+              "id": "oop-object-oriented-programming-nesne-yonelimli-programlama",
+              "question": "OOP (Object Oriented Programming - Nesne Yönelimli Programlama)",
+              "answer": "Yazılımı fonksiyonlar veya mantık yerine, nesneler (objects) etrafında modelleyen programlama paradigmasıdır. 4 temel prensibi vardır:\n\nEncapsulation (Kapsülleme): Verileri (değişkenleri) gizlemek ve dışarıdan sadece metotlar (get/set) ile erişime açmak.\n\nInheritance (Kalıtım): Bir sınıfın özelliklerini ve metotlarını başka bir sınıfa aktarmasıdır.\n\nPolymorphism (Çok Biçimlilik): Aynı isme sahip metotların farklı sınıflarda farklı şekillerde çalışabilmesidir.\n\nAbstraction (Soyutlama): Karmaşık alt sistemleri gizleyerek kullanıcıya sadece ne yapabileceğini (nasıl yapıldığını değil) göstermektir.",
+              "tags": []
+            },
+            {
+              "id": "solid",
+              "question": "SOLID",
+              "answer": "Sürdürülebilir, esnek ve anlaşılır yazılım tasarımı için Robert C. Martin tarafından oluşturulan 5 prensiptir:\n\nS - Single Responsibility: Her sınıfın değişmek için sadece tek bir nedeni olmalıdır (tek sorumluluk).\n\nO - Open/Closed: Kod, genişletilmeye (extension) açık, değiştirilmeye (modification) kapalı olmalıdır.\n\nL - Liskov Substitution: Alt sınıflar, üst sınıflarının yerine hiçbir hataya yol açmadan geçebilmelidir.\n\nI - Interface Segregation: Büyük arayüzler (interface), daha küçük ve spesifik arayüzlere bölünmelidir.\n\nD - Dependency Inversion: Üst seviye modüller alt seviye modüllere doğrudan bağlı olmamalı, her ikisi de soyutlamalara (interface/abstract class) bağlı olmalıdır.",
+              "tags": []
+            },
+            {
+              "id": "strategy-pattern-nedir",
+              "question": "Strategy Pattern nedir?",
+              "answer": "Bir işi yapmak için birden fazla farklı algoritmanın (veya mantığın) bulunduğu durumlarda if-else yığınlarından kurtulmak için kullanılan davranışsal (behavioral) bir tasarım desenidir. Çözüm yolları ayrı sınıflara ayrılır ve çalışma zamanında (runtime) istenilen strateji (algoritma) seçilip çalıştırılır.",
+              "tags": []
+            },
+            {
+              "id": "uml-unified-modeling-language-nedir",
+              "question": "UML (Unified Modeling Language) nedir?",
+              "answer": "Yazılım sistemlerinin mimarisini, yapısını ve davranışlarını görselleştirmek, tanımlamak ve dokümante etmek için kullanılan standart modelleme dilidir. (Örn: Class diyagramı, Use Case diyagramı).",
+              "tags": []
+            },
+            {
+              "id": "git-kullandin-mi-merge-nedir",
+              "question": "Git kullandın mı? Merge nedir?",
+              "answer": "(Bir yapay zeka modeli olarak kişisel olarak kod yazıp Git kullanmıyorum ancak konuya tamamen hakimim.)Git: Birden fazla kişinin aynı proje üzerinde çalışmasını sağlayan versiyon kontrol sistemidir.\n\nMerge: Farklı geliştirme dallarındaki (branch'lerdeki) değişiklikleri birleştirmek, tek bir branch üzerinde (genellikle main veya develop) toplamak işlemidir.",
+              "tags": []
+            },
+            {
+              "id": "agile-nedir-scrum-nedir-kullandiniz-mi",
+              "question": "Agile nedir, Scrum nedir, kullandınız mı?",
+              "answer": "(Bir yapay zeka modeli olarak bir Scrum takımında çalışmıyorum, fakat mekaniğini çok iyi biliyorum.)Agile (Çevik): Yazılım geliştirmede esnekliği, müşteri geri bildirimini ve sürekli teslimatı (küçük parçalar halinde) temel alan bir zihniyettir. Şelale (Waterfall) gibi geleneksel yöntemlerin aksine değişime adapte olmayı hedefler.\n\nScrum: Agile prensiplerini uygulamak için kullanılan en popüler çerçevelerden (framework) biridir. İşi 1-4 haftalık \"Sprint\" adı verilen zaman dilimlerine böler. \"Product Owner, Scrum Master ve Development Team\" olmak üzere üç rolü vardır; Daily Standup, Sprint Planning, Retrospective gibi ritüeller içerir.",
+              "tags": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
