@@ -1,38 +1,46 @@
-import { Search, Menu, BookOpen } from 'lucide-react';
+import { Search, Menu, X, GraduationCap } from 'lucide-react';
 import { useSearchContext } from '../contexts/SearchContext';
 import { ThemeToggle } from './ThemeToggle';
 
-type Props = { onMenuClick: () => void; onHome: () => void };
+type Props = { onMenuClick: () => void; onHome: () => void; menuOpen: boolean };
 
-export function TopBar({ onMenuClick, onHome }: Props) {
+export function TopBar({ onMenuClick, onHome, menuOpen }: Props) {
   const { open } = useSearchContext();
 
   return (
-    <header className="h-14 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 flex items-center px-4 gap-4 sticky top-0 z-30">
+    <header
+      className="sticky z-30 h-14 shrink-0 flex items-center gap-2 md:gap-4 px-3 md:px-4
+        bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200/80 dark:border-neutral-800"
+      style={{ top: 'env(safe-area-inset-top, 0px)' }}
+    >
       <button
         onClick={onMenuClick}
-        aria-label="Menu"
-        className="md:hidden p-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+        aria-expanded={menuOpen}
+        className="md:hidden btn-ghost"
       >
-        <Menu size={20} />
+        {menuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
       <button
         onClick={onHome}
         aria-label="Ana sayfaya dön"
-        className="flex items-center gap-2 font-semibold px-2 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+        className="flex items-center gap-2 font-semibold px-2 py-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
       >
-        <BookOpen size={20} className="text-blue-500" />
-        <span>Interview QA</span>
+        <span className="grid place-items-center h-8 w-8 rounded-lg bg-brand-600 text-white">
+          <GraduationCap size={18} />
+        </span>
+        <span className="hidden sm:inline tracking-tight">Interview QA</span>
       </button>
 
       <button
         onClick={open}
-        className="flex-1 max-w-md mx-auto flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded text-sm text-neutral-500 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
+        className="flex-1 max-w-md mx-auto flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-neutral-500
+          bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200/70 dark:hover:bg-neutral-700 transition"
       >
         <Search size={16} />
-        <span>Ara...</span>
-        <kbd className="ml-auto text-xs px-1.5 py-0.5 rounded border border-neutral-300 dark:border-neutral-600">Ctrl+K</kbd>
+        <span>Ara…</span>
+        <kbd className="kbd ml-auto hidden sm:inline">Ctrl K</kbd>
       </button>
 
       <ThemeToggle />

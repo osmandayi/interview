@@ -20,6 +20,8 @@ export type QAItem = {
   answer: string;
   tags?: string[];
   keywords?: string[];
+  /** Anahtar kelimeler cevabın tamamı yerine bu metinden çıkarılır (örn. sadece tanım kısmı). */
+  keywordSource?: string;
 };
 
 export type FlatQAItem = QAItem & {
