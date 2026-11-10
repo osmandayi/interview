@@ -1,6 +1,6 @@
 # Interview QA
 
-Mülakat sırasında Frontend (JavaScript, React) ve Backend (Java, Spring, SQL, OOP, vb.) sorularına tek noktadan ulaşılan yerel responsive web uygulaması. Bilgileri pasif okumanın yanında, **Canlı Mülakat** modu ile sistemin sorduğu sorulara cevap verip puanlanabilirsin.
+Mülakat sırasında Frontend (JavaScript, React), Backend (Java, Spring, SQL, OOP, vb.) ve Test Mühendisi (test seviyeleri, test süreçleri, otomasyon, API testleri, CI/CD, metodolojiler) sorularına tek noktadan ulaşılan yerel responsive web uygulaması. Bilgileri pasif okumanın yanında, **Canlı Mülakat** modu ile sistemin sorduğu sorulara cevap verip puanlanabilirsin.
 
 ## Kullanım
 
@@ -30,9 +30,16 @@ Aynı Wi-Fi'daki bir telefonda `http://<bilgisayar-ip>:5173` adresinden açılı
 
 ### İçerik Güncelleme
 
-1. `C:\Users\Pc\Desktop\full_stack.txt` dosyasını düzenle
-2. `npm run parse` ile yeniden parse et
-3. `npm run dev` zaten HMR ile günceller
+- **Frontend / Backend:** `C:\Users\Pc\Desktop\full_stack.txt` dosyasını düzenle (dosya yoksa commit'li `qa.json` korunur).
+- **Test Mühendisi:** repodaki `content/tester.md` dosyasını düzenle. Yapı: `## N. Başlık` = alt kategori, `### N. Başlık` = soru, altındaki `* **Kısa Tanım:**` ve `* **Mülakat Örneği & Akış:**` maddeleri = cevap.
+
+Ardından `npm run parse` ile yeniden üret (`npm run dev` / `npm run build` bunu otomatik yapar).
+
+### Arayüz
+
+- **Ana sayfa:** kaldığın yerden devam, kategori kartları (ilerleme yüzdesiyle), hızlı erişim ve son mülakat oturumlarının skorları.
+- **Kenar menü:** kategori sekmeleri (Tümü / Frontend / Backend / Test Mühendisi), menü içi filtre, alt kategori başına `okunan/toplam` sayacı ve ilerleme çubuğu. Mobilde alttan açılır.
+- **İlerleme:** soruları “okundu” olarak işaretleyebilirsin; durum tarayıcıda (localStorage) saklanır.
 
 ### Klavye Kısayolları
 
@@ -43,29 +50,35 @@ Aynı Wi-Fi'daki bir telefonda `http://<bilgisayar-ip>:5173` adresinden açılı
 | `↑` `↓` | Arama sonuçlarında gezin |
 | `Enter` | Seçili sonuca git |
 | `F` | Açık Q&A'i favoriye toggle |
+| `M` | Açık Q&A'i okundu olarak işaretle / kaldır |
+| `←` `→` | Önceki / sonraki soru |
+| `Ctrl+Enter` | Canlı Mülakat'ta cevabı gönder |
 | `T` | Tema değiştir |
 
 ## Canlı Mülakat
 
 "Canlı Mülakat" modu, bilgileri pasif okumak yerine aktif olarak test etmeni sağlar. Ana ekrandaki **Canlı Mülakat** kartından veya kenar menüden başlatılır.
 
-- **Kapsam seçimi:** Tüm havuz (varsayılan) ya da belirli bir alan/kategori.
+- **Kapsam seçimi:** Tüm havuz (varsayılan), bir kategori ya da alt kategori.
+- **Süre:** İsteğe bağlı soru başına 1/2/3 dk sınır; süre dolunca cevap otomatik gönderilir.
 - **Akış:** Sistem tekrarsız sorular sorar; cevabını metin kutusuna yazıp gönderirsin.
 - **Puanlama:** Cevabın, doğru cevaptaki anahtar kelimelerle karşılaştırılır. Eşleşme esnektir — Türkçe karakterler normalize edilir, kelime kökleri ve küçük yazım hataları (Levenshtein) tolere edilir, ve her anahtar kelime en fazla **bir kez** sayılır.
-- **Geri bildirim:** Yüzde skor + yakaladığın/kaçırdığın anahtar kelimeler + gerçek cevap gösterilir. Boş cevap gönderirsen uyarılırsın.
-- **Oturum:** İstediğin kadar devam eder; "Bitir" deyince cevaplanan soru sayısı ve ortalama skorla özet çıkar.
+- **Geri bildirim:** Yüzde skor göstergesi + yakaladığın/kaçırdığın anahtar kelimeler + gerçek cevap (yakaladığın kelimeler vurgulu) gösterilir. Boş cevap gönderirsen uyarılırsın.
+- **Oturum:** İstediğin kadar devam eder; "Bitir" deyince ortalama / en iyi skor ve en zayıftan güçlüye konu dökümüyle özet çıkar. Oturumlar ana sayfadaki geçmişe kaydedilir.
 
-Anahtar kelimeler cevap metninden otomatik çıkarılır (Türkçe stop-word'ler ayıklanır). İstersen `scripts/overrides.json` içinde `keywordOverrides` ile soru bazında elle de belirleyebilirsin.
+Anahtar kelimeler cevap metninden otomatik çıkarılır (Türkçe stop-word'ler ayıklanır). Test Mühendisi sorularında sadece "Kısa Tanım" kısmı kullanılır; örnek senaryo puanlamaya dahil edilmez. İstersen `scripts/overrides.json` içinde `keywordOverrides` ile soru bazında elle de belirleyebilirsin.
 
 ## Yapı
 
-- `scripts/build-data.mjs` — txt → JSON parser (Frontend satır-bazlı, Backend pattern-based); kaynak yoksa mevcut `qa.json`'ı korur
+- `scripts/build-data.mjs` — txt → JSON parser (Frontend satır-bazlı, Backend pattern-based, Test Mühendisi markdown başlık-bazlı); full_stack kaynağı yoksa mevcut `qa.json`'daki Frontend/Backend'i korur
+- `content/tester.md` — Test Mühendisi mülakat içeriği (kaynak metin, olduğu gibi)
 - `scripts/overrides.json` — parse hatalarını (`tagOverrides`) ve mülakat anahtar kelimelerini (`keywordOverrides`) manuel düzeltmek için
 - `src/lib/scoring.ts` — mülakat puanlama motoru (normalize, Levenshtein, anahtar kelime ayıklama, skorlama)
 - `src/components/` — React UI bileşenleri (Sidebar, SearchModal, QACard, InterviewSetup/View/Summary, vb.)
-- `src/hooks/` — useFavorites, useTheme, useSearch, useInterview
-- `src/contexts/` — Theme, Favorites, Search provider'ları
-- `tests/` — Vitest test'leri (37 test; puanlama ve mülakat oturumu dahil)
+- `src/lib/` — veri yükleme, puanlama, cevap render'ı, localStorage yardımcıları, oturum geçmişi
+- `src/hooks/` — useFavorites, useProgress, useTheme, useSearch, useInterview
+- `src/contexts/` — Theme, Favorites, Progress, Search provider'ları
+- `tests/` — Vitest test'leri (puanlama, mülakat oturumu ve Test Mühendisi parser'ı dahil)
 
 ## Tasarım Dokümanları
 

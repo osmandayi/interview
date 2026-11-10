@@ -34,6 +34,8 @@ export function useInterview() {
   const [history, setHistory] = useState<AnswerRecord[]>([]);
   const [lastResult, setLastResult] = useState<ScoreResult | null>(null);
   const [setupError, setSetupError] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<InterviewFilter>({});
 
   const start = useCallback((filter: InterviewFilter) => {
     const pool = shuffle(buildPool(filter));
@@ -42,6 +44,8 @@ export function useInterview() {
       return;
     }
     const [first, ...rest] = pool;
+    setSessionId(String(Date.now()));
+    setFilter(filter);
     setSetupError(null);
     setQueue(rest);
     setCurrent(first);
@@ -53,7 +57,7 @@ export function useInterview() {
 
   const submit = useCallback((userText: string) => {
     if (!current) return;
-    const keywords = extractKeywords(current.answer, current.keywords);
+    const keywords = extractKeywords(current.keywordSource ?? current.answer, current.keywords);
     const result = scoreAnswer(userText, keywords);
     setLastResult(result);
     setHistory((h) => [...h, { itemId: current.id, score: result.score }]);
@@ -83,6 +87,7 @@ export function useInterview() {
     setHistory([]);
     setLastResult(null);
     setSetupError(null);
+    setSessionId(null);
   }, []);
 
   const remaining = queue.length;
@@ -95,7 +100,7 @@ export function useInterview() {
 
   return {
     status, phase, current, lastResult, history, remaining,
-    averageScore, setupError,
+    averageScore, setupError, sessionId, filter,
     start, submit, next, end, reset
   };
 }

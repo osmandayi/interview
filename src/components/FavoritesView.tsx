@@ -1,6 +1,7 @@
-import { Star } from 'lucide-react';
+import { Star, ArrowRight } from 'lucide-react';
 import { useFavoritesContext } from '../contexts/FavoritesContext';
 import { flatItems } from '../lib/loadData';
+import { categoryMeta } from '../lib/categoryMeta';
 
 type Props = { onSelect: (id: string) => void };
 
@@ -10,35 +11,41 @@ export function FavoritesView({ onSelect }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-xl mx-auto py-20 px-6 text-center">
-        <Star size={48} className="mx-auto text-neutral-400 mb-4" />
+      <div className="max-w-xl mx-auto py-20 px-6 text-center animate-fade-in">
+        <span className="mx-auto mb-5 grid place-items-center h-16 w-16 rounded-2xl bg-amber-50 dark:bg-amber-900/20">
+          <Star size={30} className="text-amber-400" />
+        </span>
         <h2 className="text-xl font-semibold mb-2">Henüz favorin yok</h2>
         <p className="text-neutral-600 dark:text-neutral-400">
-          Bir soruyu favorilere eklemek için sağ üstündeki yıldıza tıkla.
+          Bir soruyu favorilere eklemek için yıldıza tıkla ya da soru açıkken <kbd className="kbd">F</kbd> tuşuna bas.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-6">
-      <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-        <Star className="fill-yellow-400 text-yellow-400" />
-        Favoriler ({items.length})
+    <div className="max-w-4xl mx-auto py-8 md:py-10 px-4 md:px-6 animate-fade-in">
+      <h1 className="text-2xl font-bold tracking-tight mb-6 flex items-center gap-2">
+        <Star className="fill-amber-400 text-amber-400" />
+        Favoriler <span className="text-neutral-400 font-medium">({items.length})</span>
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onSelect(item.id)}
-            className="text-left p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
-          >
-            <div className="text-xs text-neutral-500 mb-1">
-              {item.categoryTitle} › {item.subcategoryTitle}
-            </div>
-            <div className="font-medium">{item.question}</div>
-          </button>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {items.map((item) => {
+          const meta = categoryMeta(item.categoryId);
+          const Icon = meta.icon;
+          return (
+            <button key={item.id} onClick={() => onSelect(item.id)} className="card-interactive p-4 text-left group">
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`chip ${meta.soft} ${meta.accent}`}><Icon size={12} /> {item.categoryTitle}</span>
+                <span className="text-xs text-neutral-500 truncate">{item.subcategoryTitle}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-medium flex-1">{item.question}</span>
+                <ArrowRight size={16} className="text-neutral-300 group-hover:text-brand-500 transition" />
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

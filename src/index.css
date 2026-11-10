@@ -7,7 +7,44 @@ html, body, #root {
 }
 body {
   font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 code, pre {
   font-family: 'JetBrains Mono', monospace;
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-800 rounded-2xl shadow-sm;
+  }
+  .card-interactive {
+    @apply card transition duration-200 hover:shadow-md hover:-translate-y-0.5 hover:border-brand-300 dark:hover:border-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2
+      dark:focus-visible:ring-offset-neutral-950 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800;
+  }
+  .btn-secondary {
+    @apply btn border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800;
+  }
+  .btn-ghost {
+    @apply btn px-2.5 py-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800;
+  }
+  .input {
+    @apply w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-sm
+      placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60 focus:border-brand-500 transition;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  .kbd {
+    @apply text-[11px] font-medium px-1.5 py-0.5 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white/60 dark:bg-neutral-800/60;
+  }
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400;
+  }
 }

@@ -45,10 +45,10 @@ export function SearchModal({ onSelect }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4" onClick={close}>
-      <div className="fixed inset-0 bg-black/50" />
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4" onClick={close}>
+      <div className="fixed inset-0 bg-neutral-950/50 backdrop-blur-sm animate-fade-in" />
       <div
-        className="relative w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-lg shadow-2xl overflow-hidden"
+        className="relative w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl ring-1 ring-neutral-200 dark:ring-neutral-800 overflow-hidden animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
@@ -61,12 +61,12 @@ export function SearchModal({ onSelect }: Props) {
             placeholder="Ara... (en az 2 karakter)"
             className="flex-1 bg-transparent outline-none text-base"
           />
-          <button onClick={close} aria-label="Kapat" className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <button onClick={close} aria-label="Kapat" className="btn-ghost p-1.5">
             <X size={18} />
           </button>
         </div>
 
-        <div className="max-h-96 overflow-y-auto">
+        <div className="max-h-[60vh] overflow-y-auto p-2">
           {results.length === 0 && query.trim().length >= 2 && (
             <div className="p-6 text-center text-sm text-neutral-500">Sonuç bulunamadı.</div>
           )}
@@ -75,8 +75,8 @@ export function SearchModal({ onSelect }: Props) {
               key={item.id}
               onClick={() => { onSelect(item.id); close(); }}
               onMouseEnter={() => setActiveIdx(i)}
-              className={`w-full text-left px-4 py-3 border-b border-neutral-100 dark:border-neutral-800 last:border-b-0 ${
-                i === activeIdx ? 'bg-blue-50 dark:bg-blue-900/30' : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'
+              className={`w-full text-left px-3 py-2.5 rounded-xl transition ${
+                i === activeIdx ? 'bg-brand-50 dark:bg-brand-900/30' : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'
               }`}
             >
               <div className="text-xs text-neutral-500 mb-1">
@@ -89,7 +89,7 @@ export function SearchModal({ onSelect }: Props) {
 
         <div className="px-4 py-2 border-t border-neutral-200 dark:border-neutral-800 text-xs text-neutral-500 flex justify-between">
           <span>{results.length} sonuç</span>
-          <span>↑↓ gez • Enter aç • Esc kapat</span>
+          <span className="flex gap-2"><span><kbd className="kbd">↑↓</kbd> gez</span><span><kbd className="kbd">Enter</kbd> aç</span><span><kbd className="kbd">Esc</kbd> kapat</span></span>
         </div>
       </div>
     </div>
