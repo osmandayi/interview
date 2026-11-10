@@ -339,7 +339,7 @@ function applyOverrides(data, overrides) {
 }
 
 // ---------------------------------------------------------------------------
-// Test Mühendisi (content/tester.md)
+// Tester (content/tester.md)
 // Markdown yapısı: "## N. Başlık" = alt kategori, "### N. Başlık" = soru,
 // altındaki "* **Kısa Tanım:**" / "* **Mülakat Örneği & Akış:**" maddeleri = cevap.
 // İçerik olduğu gibi korunur; sadece markdown işaretleri arayüzde okunacak hale getirilir.
@@ -488,7 +488,7 @@ if (import.meta.url === invokedPath) {
   const outPath = resolve(__dirname, '..', 'src', 'data', 'qa.json');
 
   // Frontend/Backend kaynağı repo dışında. Fresh clone'da yoksa commit'li
-  // qa.json'daki Frontend/Backend kategorileri korunur; Test Mühendisi kısmı
+  // qa.json'daki Frontend/Backend kategorileri korunur; Tester kısmı
   // ise repodaki content/tester.md'den her seferinde yeniden üretilir.
   let data;
   if (existsSync(SRC)) {
@@ -504,11 +504,11 @@ if (import.meta.url === invokedPath) {
   if (existsSync(TESTER_SRC)) {
     data.categories.push({
       id: 'tester',
-      title: 'Test Mühendisi',
+      title: 'Tester',
       subcategories: parseTester(readFileSync(TESTER_SRC, 'utf-8'))
     });
   } else {
-    console.warn(`⚠ Test Mühendisi kaynağı bulunamadı: ${TESTER_SRC}`);
+    console.warn(`⚠ Tester kaynağı bulunamadı: ${TESTER_SRC}`);
   }
   data = ensureUniqueIds(applyOverrides(data, loadOverrides()));
 

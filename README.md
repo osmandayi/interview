@@ -1,6 +1,6 @@
 # Interview QA
 
-Mülakat sırasında Frontend (JavaScript, React), Backend (Java, Spring, SQL, OOP, vb.) ve Test Mühendisi (test seviyeleri, test süreçleri, otomasyon, API testleri, CI/CD, metodolojiler) sorularına tek noktadan ulaşılan yerel responsive web uygulaması. Bilgileri pasif okumanın yanında, **Canlı Mülakat** modu ile sistemin sorduğu sorulara cevap verip puanlanabilirsin.
+Mülakat sırasında Frontend (JavaScript, React), Backend (Java, Spring, SQL, OOP, vb.) ve Tester (test seviyeleri, test süreçleri, otomasyon, API testleri, CI/CD, metodolojiler) sorularına tek noktadan ulaşılan yerel responsive web uygulaması. Bilgileri pasif okumanın yanında, **Canlı Mülakat** modu ile sistemin sorduğu sorulara cevap verip puanlanabilirsin.
 
 ## Kullanım
 
@@ -31,14 +31,14 @@ Aynı Wi-Fi'daki bir telefonda `http://<bilgisayar-ip>:5173` adresinden açılı
 ### İçerik Güncelleme
 
 - **Frontend / Backend:** `C:\Users\Pc\Desktop\full_stack.txt` dosyasını düzenle (dosya yoksa commit'li `qa.json` korunur).
-- **Test Mühendisi:** repodaki `content/tester.md` dosyasını düzenle. Yapı: `## N. Başlık` = alt kategori, `### N. Başlık` = soru, altındaki `* **Kısa Tanım:**` ve `* **Mülakat Örneği & Akış:**` maddeleri = cevap.
+- **Tester:** repodaki `content/tester.md` dosyasını düzenle. Yapı: `## N. Başlık` = alt kategori, `### N. Başlık` = soru, altındaki `* **Kısa Tanım:**` ve `* **Mülakat Örneği & Akış:**` maddeleri = cevap.
 
 Ardından `npm run parse` ile yeniden üret (`npm run dev` / `npm run build` bunu otomatik yapar).
 
 ### Arayüz
 
 - **Ana sayfa:** kaldığın yerden devam, kategori kartları (ilerleme yüzdesiyle), hızlı erişim ve son mülakat oturumlarının skorları.
-- **Kenar menü:** kategori sekmeleri (Tümü / Frontend / Backend / Test Mühendisi), menü içi filtre, alt kategori başına `okunan/toplam` sayacı ve ilerleme çubuğu. Mobilde alttan açılır.
+- **Kenar menü:** kategori sekmeleri (Tümü / Frontend / Backend / Tester), menü içi filtre, alt kategori başına `okunan/toplam` sayacı ve ilerleme çubuğu. Mobilde alttan açılır.
 - **İlerleme:** soruları “okundu” olarak işaretleyebilirsin; durum tarayıcıda (localStorage) saklanır.
 
 ### Klavye Kısayolları
@@ -66,19 +66,19 @@ Ardından `npm run parse` ile yeniden üret (`npm run dev` / `npm run build` bun
 - **Geri bildirim:** Yüzde skor göstergesi + yakaladığın/kaçırdığın anahtar kelimeler + gerçek cevap (yakaladığın kelimeler vurgulu) gösterilir. Boş cevap gönderirsen uyarılırsın.
 - **Oturum:** İstediğin kadar devam eder; "Bitir" deyince ortalama / en iyi skor ve en zayıftan güçlüye konu dökümüyle özet çıkar. Oturumlar ana sayfadaki geçmişe kaydedilir.
 
-Anahtar kelimeler cevap metninden otomatik çıkarılır (Türkçe stop-word'ler ayıklanır). Test Mühendisi sorularında sadece "Kısa Tanım" kısmı kullanılır; örnek senaryo puanlamaya dahil edilmez. İstersen `scripts/overrides.json` içinde `keywordOverrides` ile soru bazında elle de belirleyebilirsin.
+Anahtar kelimeler cevap metninden otomatik çıkarılır (Türkçe stop-word'ler ayıklanır). Tester sorularında sadece "Kısa Tanım" kısmı kullanılır; örnek senaryo puanlamaya dahil edilmez. İstersen `scripts/overrides.json` içinde `keywordOverrides` ile soru bazında elle de belirleyebilirsin.
 
 ## Yapı
 
-- `scripts/build-data.mjs` — txt → JSON parser (Frontend satır-bazlı, Backend pattern-based, Test Mühendisi markdown başlık-bazlı); full_stack kaynağı yoksa mevcut `qa.json`'daki Frontend/Backend'i korur
-- `content/tester.md` — Test Mühendisi mülakat içeriği (kaynak metin, olduğu gibi)
+- `scripts/build-data.mjs` — txt → JSON parser (Frontend satır-bazlı, Backend pattern-based, Tester markdown başlık-bazlı); full_stack kaynağı yoksa mevcut `qa.json`'daki Frontend/Backend'i korur
+- `content/tester.md` — Tester mülakat içeriği (kaynak metin, olduğu gibi)
 - `scripts/overrides.json` — parse hatalarını (`tagOverrides`) ve mülakat anahtar kelimelerini (`keywordOverrides`) manuel düzeltmek için
 - `src/lib/scoring.ts` — mülakat puanlama motoru (normalize, Levenshtein, anahtar kelime ayıklama, skorlama)
 - `src/components/` — React UI bileşenleri (Sidebar, SearchModal, QACard, InterviewSetup/View/Summary, vb.)
 - `src/lib/` — veri yükleme, puanlama, cevap render'ı, localStorage yardımcıları, oturum geçmişi
 - `src/hooks/` — useFavorites, useProgress, useTheme, useSearch, useInterview
 - `src/contexts/` — Theme, Favorites, Progress, Search provider'ları
-- `tests/` — Vitest test'leri (puanlama, mülakat oturumu ve Test Mühendisi parser'ı dahil)
+- `tests/` — Vitest test'leri (puanlama, mülakat oturumu ve Tester parser'ı dahil)
 
 ## Tasarım Dokümanları
 
