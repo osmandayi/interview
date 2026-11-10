@@ -338,6 +338,125 @@ function applyOverrides(data, overrides) {
   return data;
 }
 
+// ---------------------------------------------------------------------------
+// Test Mühendisi (content/tester.md)
+// Markdown yapısı: "## N. Başlık" = alt kategori, "### N. Başlık" = soru,
+// altındaki "* **Kısa Tanım:**" / "* **Mülakat Örneği & Akış:**" maddeleri = cevap.
+// İçerik olduğu gibi korunur; sadece markdown işaretleri arayüzde okunacak hale getirilir.
+// ---------------------------------------------------------------------------
+
+const TESTER_SECTION_LABEL = /^\*\s+\*\*(Kısa Tanım|Mülakat Örneği & Akış):\*\*\s*(.*)$/;
+
+function stripNumbering(title) {
+  return title.replace(/^\d+\.\s*/, '').trim();
+}
+
+// Cevap gövdesini paragraflara dönüştürür:
+// - "Kısa Tanım" ve "Mülakat Örneği & Akış" her biri ayrı paragraf (etiket kalın kalır)
+// - Diğer "* " maddeleri "• " olarak ait oldukları paragrafın altına eklenir
+// - Örnekleri saran italik işaretleri (*"..."*) kaldırılır, tırnaklar korunur
+function formatTesterAnswer(lines) {
+  const paragraphs = [];
+  let current = null;
+
+  for (const raw of lines) {
+    const t = raw.trim();
+    if (!t || t === '---') continue;
+
+    const label = t.match(TESTER_SECTION_LABEL);
+    if (label) {
+      current = [`**${label[1]}:**${label[2] ? ' ' + label[2] : ''}`];
+      paragraphs.push(current);
+      continue;
+    }
+
+    const line = t.startsWith('* ') ? '• ' + t.slice(2).trim() : t;
+    if (current) current.push(line);
+    else paragraphs.push((current = [line]));
+  }
+
+  return paragraphs
+    .map((p) => p.join('\n'))
+    .join('\n\n')
+    .replace(/(^|[\s(])\*"/g, '$1"')
+    .replace(/"\*(?=[\s.,;:)]|$)/gm, '"')
+    .trim();
+}
+
+// Canlı Mülakat puanlaması için anahtar kelimeler sadece "Kısa Tanım" kısmından
+// çıkarılsın diye düz metin halini döndürür (örnek senaryo puanlamayı sulandırmasın).
+function testerDefinitionText(answer) {
+  const def = answer.split('\n\n').find((p) => p.startsWith('**Kısa Tanım:**'));
+  if (!def) return undefined;
+  return def
+    .replace(/^\*\*Kısa Tanım:\*\*/, '')
+    .replace(/\*\*|`|•/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim() || undefined;
+}
+
+export function parseTester(source) {
+  const lines = source.replace(/\r/g, '').split('\n');
+  const subcategories = [];
+  let sub = null;
+  let item = null;
+
+  const flushItem = () => {
+    if (!sub || !item) return;
+    const answer = formatTesterAnswer(item.lines);
+    if (answer) {
+      const entry = { id: item.id, question: item.question, answer, tags: [] };
+      const keywordSource = testerDefinitionText(answer);
+      if (keywordSource) entry.keywordSource = keywordSource;
+      sub.items.push(entry);
+    }
+    item = null;
+  };
+
+  for (const line of lines) {
+    const h2 = line.match(/^##\s+(.+?)\s*$/);
+    const h3 = line.match(/^###\s+(.+?)\s*$/);
+    if (h3) {
+      flushItem();
+      if (!sub) continue;
+      const question = stripNumbering(h3[1]);
+      item = { id: slugify(question), question, lines: [] };
+    } else if (h2) {
+      flushItem();
+      const title = stripNumbering(h2[1]);
+      sub = { id: slugify(title), title, items: [] };
+      subcategories.push(sub);
+    } else if (item) {
+      item.lines.push(line);
+    }
+  }
+  flushItem();
+
+  return subcategories.filter((s) => s.items.length > 0);
+}
+
+// ID çakışmalarını (kategoriler arası dahil) "-2", "-3" ekiyle çözer.
+function ensureUniqueIds(data) {
+  const makeUnique = () => {
+    const seen = new Set();
+    return (id) => {
+      let candidate = id;
+      for (let n = 2; seen.has(candidate); n++) candidate = `${id}-${n}`;
+      seen.add(candidate);
+      return candidate;
+    };
+  };
+  const uniqueSub = makeUnique();
+  const uniqueItem = makeUnique();
+  for (const cat of data.categories) {
+    for (const s of cat.subcategories) {
+      s.id = uniqueSub(s.id);
+      for (const it of s.items) it.id = uniqueItem(it.id);
+    }
+  }
+  return data;
+}
+
 export function parseDocument(source) {
   const frontendMatch = source.match(/^FRONTEND\s*\n([\s\S]*?)\n\s*BACKEND\b/m);
   if (!frontendMatch) {
@@ -365,20 +484,34 @@ const invokedPath = process.argv[1] ? pathToFileUrlSafe(process.argv[1]) : '';
 if (import.meta.url === invokedPath) {
   const verbose = process.argv.includes('--verbose');
   const SRC = 'C:/Users/Pc/Desktop/full_stack.txt';
+  const TESTER_SRC = resolve(__dirname, '..', 'content', 'tester.md');
   const outPath = resolve(__dirname, '..', 'src', 'data', 'qa.json');
 
-  // The source file lives outside the repo. On a fresh clone it is absent —
-  // in that case keep the committed qa.json instead of crashing the build.
-  if (!existsSync(SRC)) {
-    if (existsSync(outPath)) {
-      console.warn(`⚠ Kaynak bulunamadı (${SRC}). Mevcut qa.json korunuyor, yeniden üretilmedi.`);
-      process.exit(0);
-    }
+  // Frontend/Backend kaynağı repo dışında. Fresh clone'da yoksa commit'li
+  // qa.json'daki Frontend/Backend kategorileri korunur; Test Mühendisi kısmı
+  // ise repodaki content/tester.md'den her seferinde yeniden üretilir.
+  let data;
+  if (existsSync(SRC)) {
+    data = parseDocument(readFileSync(SRC, 'utf-8'));
+  } else if (existsSync(outPath)) {
+    console.warn(`⚠ Kaynak bulunamadı (${SRC}). Frontend/Backend için mevcut qa.json korunuyor.`);
+    const existing = JSON.parse(readFileSync(outPath, 'utf-8'));
+    data = { categories: existing.categories.filter((c) => c.id !== 'tester') };
+  } else {
     throw new Error(`Kaynak dosya yok ve üretilmiş qa.json da yok: ${SRC}`);
   }
 
-  const text = readFileSync(SRC, 'utf-8');
-  const data = parseDocument(text);
+  if (existsSync(TESTER_SRC)) {
+    data.categories.push({
+      id: 'tester',
+      title: 'Test Mühendisi',
+      subcategories: parseTester(readFileSync(TESTER_SRC, 'utf-8'))
+    });
+  } else {
+    console.warn(`⚠ Test Mühendisi kaynağı bulunamadı: ${TESTER_SRC}`);
+  }
+  data = ensureUniqueIds(applyOverrides(data, loadOverrides()));
+
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, JSON.stringify(data, null, 2), 'utf-8');
 
