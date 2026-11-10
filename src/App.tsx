@@ -142,7 +142,7 @@ function AppInner() {
           <Sidebar
             selectedId={selectedId}
             onSelect={handleSelect}
-            view={view === 'favorites' ? 'favorites' : view === 'qa' ? 'qa' : 'other'}
+            view={view === 'welcome' ? 'other' : view}
             onFavorites={() => { setView('favorites'); setSidebarOpen(false); }}
             onInterview={goInterview}
             categoryTab={categoryTab}

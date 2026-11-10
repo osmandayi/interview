@@ -5,6 +5,51 @@
 html, body, #root {
   height: 100%;
 }
+
+/* Tarayıcının yerel kontrolleri (kaydırma çubuğu, select, input) temayı izlesin. */
+:root {
+  color-scheme: light;
+  --sb-thumb: rgb(212 212 212);        /* neutral-300 */
+  --sb-thumb-hover: rgb(163 163 163);  /* neutral-400 */
+}
+html.dark {
+  color-scheme: dark;
+  --sb-thumb: rgb(64 64 64);           /* neutral-700 */
+  --sb-thumb-hover: rgb(82 82 82);     /* neutral-600 */
+}
+
+/* İnce, temaya uyumlu kaydırma çubukları */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--sb-thumb);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--sb-thumb-hover);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Kaydırılabilir ama çubuğu gizli alanlar (ör. yatay sekme şeritleri) */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 body {
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

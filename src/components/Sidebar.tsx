@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, ChevronRight, Star, Mic, Search, X, CircleCheck } from 'lucide-react';
+import { ChevronDown, ChevronRight, Star, Mic, Search, X, CircleCheck, Layers } from 'lucide-react';
 import { qaData } from '../lib/loadData';
 import { useFavoritesContext } from '../contexts/FavoritesContext';
 import { useProgressContext } from '../contexts/ProgressContext';
 import { ProgressBar } from './ProgressBar';
+import { categoryMeta } from '../lib/categoryMeta';
 import type { Category } from '../types/qa';
 
 export const ALL_CATEGORIES = 'all';
@@ -11,7 +12,7 @@ export const ALL_CATEGORIES = 'all';
 type Props = {
   selectedId: string | null;
   onSelect: (id: string) => void;
-  view: 'qa' | 'favorites' | 'other';
+  view: 'qa' | 'favorites' | 'interview' | 'other';
   onFavorites: () => void;
   onInterview: () => void;
   categoryTab: string;
@@ -34,6 +35,7 @@ export function Sidebar({
   const { isRead, countRead } = useProgressContext();
   const [filter, setFilter] = useState('');
   const [openSubs, setOpenSubs] = useState<Set<string>>(new Set());
+  const [scrolled, setScrolled] = useState(false);
 
   const categories: Category[] = useMemo(
     () =>
@@ -86,7 +88,11 @@ export function Sidebar({
       return next;
     });
 
-  const tabs = [{ id: ALL_CATEGORIES, title: 'Tümü' }, ...qaData.categories.map((c) => ({ id: c.id, title: c.title }))];
+  const countOf = (c: Category) => c.subcategories.reduce((n, s) => n + s.items.length, 0);
+  const tabs = [
+    { id: ALL_CATEGORIES, title: 'Tümü', count: qaData.categories.reduce((n, c) => n + countOf(c), 0) },
+    ...qaData.categories.map((c) => ({ id: c.id, title: c.title, count: countOf(c) }))
+  ];
 
   return (
     <nav className="w-full md:w-80 h-full flex flex-col bg-white dark:bg-neutral-900 md:border-r border-neutral-200 dark:border-neutral-800">
@@ -98,43 +104,63 @@ export function Sidebar({
         </button>
       </div>
 
-      <div className="p-4 space-y-3 border-b border-neutral-200/80 dark:border-neutral-800">
+      <div
+        className={`p-4 space-y-4 border-b transition-shadow ${
+          scrolled
+            ? 'border-neutral-200 dark:border-neutral-800 shadow-[0_6px_12px_-10px_rgba(0,0,0,0.35)] dark:shadow-[0_6px_12px_-8px_rgba(0,0,0,0.8)]'
+            : 'border-neutral-200/80 dark:border-neutral-800'
+        }`}
+      >
+        {/* Hızlı aksiyonlar */}
         <div className="grid grid-cols-2 gap-2">
-          <button
+          <ActionTile
+            active={view === 'favorites'}
             onClick={onFavorites}
-            className={`btn justify-start px-3 py-2 ${
-              view === 'favorites'
-                ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300'
-                : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
-            }`}
-          >
-            <Star size={16} className={view === 'favorites' ? 'fill-amber-400 text-amber-400' : 'text-amber-500'} />
-            Favoriler
-            <span className="ml-auto text-xs text-neutral-500">{favIds.size}</span>
-          </button>
-          <button onClick={onInterview} className="btn justify-start px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
-            <Mic size={16} className="text-emerald-500" />
-            Mülakat
-          </button>
+            label="Favoriler"
+            sub={`${favIds.size} soru`}
+            tone="amber"
+            icon={<Star size={16} className={view === 'favorites' ? 'fill-current' : ''} />}
+          />
+          <ActionTile
+            active={view === 'interview'}
+            onClick={onInterview}
+            label="Mülakat"
+            sub="Canlı pratik"
+            tone="emerald"
+            icon={<Mic size={16} />}
+          />
         </div>
 
-        {/* Kategori sekmeleri */}
-        <div role="tablist" aria-label="Kategori" className="flex gap-1 p-1 rounded-xl bg-neutral-100 dark:bg-neutral-800/70 overflow-x-auto">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              role="tab"
-              aria-selected={categoryTab === t.id}
-              onClick={() => onCategoryTab(t.id)}
-              className={`flex-1 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
-                categoryTab === t.id
-                  ? 'bg-white dark:bg-neutral-900 shadow-sm text-neutral-900 dark:text-neutral-50'
-                  : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
-              }`}
-            >
-              {t.title}
-            </button>
-          ))}
+        {/* Kategori sekmeleri — taşmasın diye 2x2 ızgara */}
+        <div>
+          <div className="eyebrow mb-2">Kategoriler</div>
+          <div role="tablist" aria-label="Kategori" className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-neutral-100 dark:bg-neutral-800/60">
+            {tabs.map((t) => {
+              const active = categoryTab === t.id;
+              const meta = t.id === ALL_CATEGORIES ? null : categoryMeta(t.id);
+              const Icon = meta ? meta.icon : Layers;
+              return (
+                <button
+                  key={t.id}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => onCategoryTab(t.id)}
+                  title={t.title}
+                  className={`flex items-center gap-1.5 min-w-0 rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
+                    active
+                      ? 'bg-white dark:bg-neutral-950 shadow-sm ring-1 ring-neutral-200 dark:ring-neutral-700 text-neutral-900 dark:text-neutral-50'
+                      : 'text-neutral-500 dark:text-neutral-400 hover:bg-white/60 dark:hover:bg-neutral-700/50 hover:text-neutral-800 dark:hover:text-neutral-200'
+                  }`}
+                >
+                  <Icon size={13} className={`shrink-0 ${active ? (meta ? meta.accent : 'text-brand-500') : ''}`} />
+                  <span className="truncate">{t.title}</span>
+                  <span className={`ml-auto tabular-nums text-[10px] ${active ? 'text-neutral-500' : 'text-neutral-400 dark:text-neutral-500'}`}>
+                    {t.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Filtre */}
@@ -159,16 +185,24 @@ export function Sidebar({
           )}
         </div>
 
-        <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-neutral-500">
-            <span>İlerleme</span>
-            <span>{scopeRead}/{scopeIds.length} okundu</span>
+        <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/40 px-3 py-2.5">
+          <div className="flex items-baseline justify-between text-xs mb-1.5">
+            <span className="font-medium text-neutral-700 dark:text-neutral-300">İlerleme</span>
+            <span className="tabular-nums text-neutral-500">
+              {scopeRead}/{scopeIds.length} ·{' '}
+              <span className="font-semibold text-neutral-700 dark:text-neutral-200">
+                %{scopeIds.length === 0 ? 0 : Math.round((scopeRead / scopeIds.length) * 100)}
+              </span>
+            </span>
           </div>
           <ProgressBar value={scopeRead} total={scopeIds.length} />
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3">
+      <div
+        className="flex-1 overflow-y-auto overscroll-contain p-3"
+        onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 4)}
+      >
         {visible.length === 0 && (
           <p className="px-3 py-8 text-center text-sm text-neutral-500">“{filter}” ile eşleşen soru yok.</p>
         )}
@@ -238,5 +272,47 @@ export function Sidebar({
         ))}
       </div>
     </nav>
+  );
+}
+
+const TILE_TONES = {
+  amber: {
+    icon: 'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400',
+    active: 'border-amber-300 bg-amber-50 dark:border-amber-500/40 dark:bg-amber-500/10'
+  },
+  emerald: {
+    icon: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400',
+    active: 'border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10'
+  }
+} as const;
+
+function ActionTile({
+  active, onClick, label, sub, tone, icon
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  sub: string;
+  tone: keyof typeof TILE_TONES;
+  icon: React.ReactNode;
+}) {
+  const t = TILE_TONES[tone];
+  return (
+    <button
+      onClick={onClick}
+      aria-current={active ? 'page' : undefined}
+      className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left transition
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
+        active
+          ? t.active
+          : 'border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/60 hover:border-neutral-300 dark:hover:border-neutral-700'
+      }`}
+    >
+      <span className={`grid place-items-center h-8 w-8 shrink-0 rounded-lg ${t.icon}`}>{icon}</span>
+      <span className="min-w-0">
+        <span className="block text-sm font-medium leading-tight text-neutral-800 dark:text-neutral-100">{label}</span>
+        <span className="block text-[11px] text-neutral-500 truncate">{sub}</span>
+      </span>
+    </button>
   );
 }
